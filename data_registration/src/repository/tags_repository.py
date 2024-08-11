@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.infrastructure.database import AbstractDBClient
-from src.schema.tags_schema import Tags
 from src.schema.tables_schema import TABLES
+from src.schema.tags_schema import Tags
 
 
 class AbstractTagsRepository(ABC):
