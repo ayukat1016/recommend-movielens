@@ -1,0 +1,27 @@
+CREATE TABLE IF NOT EXISTS movies (
+    movie_id INTEGER NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    genre VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (movie_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS ratings (
+    user_id INTEGER NOT NULL,
+    movie_id INTEGER NOT NULL,
+    rating FLOAT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (user_id, movie_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS tags (
+    user_id INTEGER NOT NULL,
+    movie_id INTEGER NOT NULL,
+    tag VARCHAR(255) NOT NULL,
+    timestamp INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    PRIMARY KEY (user_id, movie_id)
+);

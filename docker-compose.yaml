@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:14.3
+    container_name: postgres
+    networks:
+      - default
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=recommend_movielens
+      - POSTGRES_INITDB_ARGS="--encoding=UTF-8"
+    ports:
+      - 5432:5432
+    hostname: postgres
+    restart: always
+    stdin_open: true
+
+  data_registration:
+    container_name: data_registration
+    image: recommend_movielens:recommend_movielens_data_registration_1.0.0    
+    restart: "no"
+    networks:
+      - default
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DBNAME=recommend_movielens
+      - LOG_LEVEL=DEBUG
+    command: >
+      /bin/sh -c "sleep 10s && python -m src.main --tables_filepath "/opt/data/tables.sql" --movies_filepath "/opt/data/movies_demo.csv" --ratings_filepath "/opt/data/ratings_demo.csv" --tags_filepath "/opt/data/tags_demo.csv""
+    volumes:
+      - ./data:/opt/data
+      - ./data_registration/src:/opt/src
+    depends_on:
+      - postgres
