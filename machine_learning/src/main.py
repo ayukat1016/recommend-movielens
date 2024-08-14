@@ -11,7 +11,8 @@ from src.middleware.logger import configure_logger
 # from src.ml_algos.lightgbm_regressor import LightGBMRegression
 # from src.ml_algos.models import get_model
 # from src.ml_algos.preprocess import LagSalesExtractor, PricesExtractor
-# from src.ml_algos.preprocess import RatingExtractor
+from src.ml_algos.preprocess import RatingExtractor
+from src.ml_algos.preprocess import GenreExtractor
 from src.repository.movies_repository import MoviesRepository
 from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
@@ -84,12 +85,13 @@ def main(cfg: DictConfig):
         # prediction_date_to=cfg.period.prediction_date_to,
     )
 
-    # rating_extractor=RatingExtractor()
+    rating_extractor=RatingExtractor()
+    genre_extractor=GenreExtractor()
 
 
     preprocess_usecase = PreprocessUsecase(
-        # rating_extractor=rating_extractor,
-        # lag_sales_extractor=lag_sales_extractor,
+        rating_extractor=rating_extractor,
+        genre_extractor=genre_extractor,
     )
 
     preprocessed_dataset = preprocess_usecase.preprocess_dataset(

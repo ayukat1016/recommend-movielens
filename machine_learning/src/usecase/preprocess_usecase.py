@@ -1,5 +1,4 @@
-import itertools
-import ast
+
 
 
 import pandas as pd
@@ -8,7 +7,7 @@ from src.domain.common_data import XY
 from src.domain.preprocessed_data import PreprocessedDataset
 from src.domain.raw_data import RawDataset
 from src.middleware.logger import configure_logger
-# from src.ml_algos.preprocess import AbstractExtractor
+from src.ml_algos.preprocess import AbstractExtractor
 
 logger = configure_logger(__name__)
 
@@ -16,8 +15,8 @@ logger = configure_logger(__name__)
 class PreprocessUsecase(object):
     def __init__(
         self,
-        # rating_extractor: AbstractExtractor,
-        # lag_sales_extractor: AbstractExtractor,
+        rating_extractor: AbstractExtractor,
+        genre_extractor: AbstractExtractor,
     ):
         """Preprocess usecase.
 
@@ -25,8 +24,8 @@ class PreprocessUsecase(object):
             prices_extractor (AbstractExtractor): Algorithm to extract prices statitics.
             lag_sales_extractor (AbstractExtractor): Algorithm to extract lag sales data.
         """
-        # self.prices_extractor = prices_extractor
-        # self.lag_sales_extractor = lag_sales_extractor
+        self.rating_extractor = rating_extractor
+        self.genre_extractor = genre_extractor
 
     def preprocess_dataset(
         self,
@@ -49,29 +48,14 @@ class PreprocessUsecase(object):
         df_train = train_keys_y.copy()
         df_test = test_keys_y.copy()
 
-        aggregators: list = ["min", "max", "mean"]
-        user_features = movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
-        movie_features = movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
-        for agg in aggregators:
-            df_train[f"u_{agg}"] = df_train["user_id"].map(user_features[agg])
-            df_test[f"u_{agg}"] = df_test["user_id"].map(user_features[agg])
-            df_train[f"m_{agg}"] = df_train["movie_id"].map(movie_features[agg])
-            df_test[f"m_{agg}"] = df_test["movie_id"].map(movie_features[agg])
+        df_train = self.rating_extractor.run(movielens_train, df_train)
+        df_test = self.rating_extractor.run(movielens_train, df_test)
 
         average_rating = df_train["rating"].mean()
         df_test.fillna(average_rating, inplace=True)
 
-
-        movie_genres = dataset.data_movies[["movie_id", "genre"]].copy()
-        movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
-        genres = list(set(itertools.chain(*movie_genres.genre)))
-        genres = sorted(genres)
-
-        for genre in genres:
-            movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(lambda x: genre in x)
-        movie_genres.drop("genre", axis=1, inplace=True)
-        df_train = df_train.merge(movie_genres, on="movie_id")
-        df_test = df_test.merge(movie_genres, on="movie_id")
+        df_train = self.genre_extractor.run(dataset.data_movies, df_train)
+        df_test = self.genre_extractor.run(dataset.data_movies, df_test)
 
         logger.info(f"transform training data...")
         training_data = self.split_columns(
