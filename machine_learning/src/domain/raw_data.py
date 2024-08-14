@@ -5,19 +5,14 @@ from pandera import Field, SchemaModel
 from pandera.typing import Series
 
 
-@dataclass(frozen=True)
-class RawDataRatings:
-    data: pd.DataFrame
-
-    # def __post_init__(self):
-    #     RawDataSchema.validate(self.data)
 
 @dataclass(frozen=True)
 class RawDataset:
-    data_train: RawDataRatings
-    data_test: RawDataRatings
-    data_movie: pd.DataFrame
+    data_movielens: pd.DataFrame
+    data_movies: pd.DataFrame
 
+    # def __post_init__(self):
+    #     RawDataSchema.validate(self.data_movielens)
 
 class RawDataSchema(SchemaModel):
     id: Series[str] = Field(

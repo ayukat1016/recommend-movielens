@@ -2,7 +2,7 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 
-from src.domain.raw_data import RawDataset, RawDataRatings
+from src.domain.raw_data import RawDataset
 from src.middleware.logger import configure_logger
 from src.repository.movies_repository import AbstractMoviesRepository
 from src.repository.ratings_repository import AbstractRatingsRepository
@@ -33,49 +33,22 @@ class DataLoaderUsecase(object):
         self.ratings_repository = ratings_repository
         self.tags_repository = tags_repository
 
-    def load_dataset(
-        self,
-    ) -> RawDataset:
+    def load_dataset(self) -> RawDataset:
         """Load dataset for training, validation and prediction.
 
         Returns:
             RawDataset: Data loaded from database.
         """
-        movielens, movies= self.load_data()
-        movielens_train, movielens_test = self.split_data(movielens)
-
-        data_train = RawDataRatings(data=movielens_train)
-        data_test = RawDataRatings(data=movielens_test)
-
-        return RawDataset(
-            data_train=data_train,
-            data_test=data_test,
-            data_movie=movies,
-        )
-            
-
-
-
-    def load_data(
-        self,
-    ) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Load data.
-
-        Returns:
-            pd.DataFrame: Training and validation data.
-        """
-
-        # logger.info(f"load data from: {date_from} to {date_to}")
-        # data = self.load_sales_calendar_data(
-        #     date_from=date_from,
-        #     date_to=date_to,
-        # )
+        # movielens_df, movies_df= self.load_data()
+        # movielens_train, movielens_test = self.split_data(movielens)
+        # data_train = RawDataRatings(data=movielens_train)
+        # data_test = RawDataRatings(data=movielens_test)
 
         logger.info(f"load data from database")
 
         movies_data = self.load_movies_data()
-        dataset_dict = [d.dict() for d in movies_data]
-        movies_df = pd.DataFrame(dataset_dict)
+        movies_dataset_dict = [d.dict() for d in movies_data]
+        movies_df = pd.DataFrame(movies_dataset_dict)
 
         ratings_data = self.load_ratings_data()
         ratings_dataset_dict = [d.dict() for d in ratings_data]
@@ -89,38 +62,62 @@ class DataLoaderUsecase(object):
         movies_df = movies_df.merge(movies_tags_df, on="movie_id", how="left")
         movielens_df = ratings_df.merge(movies_df, on='movie_id', how="left")
 
-        # print(movies_df)
-        # print(ratings_df)
-        # print(tags_df)
-        # print(movies_tags_df)        
-        # print(movielens_df)
-
-        df = movielens_df
-
-        logger.info(f"loaded: {df.shape}")
-        logger.info(
-            f"""df:
-{df}
-column:
-{df.columns}
-type:
-{df.dtypes}
-        """
+        return RawDataset(
+            data_movielens=movielens_df,
+            data_movies=movies_df,
         )
-        return (df, movies_df)
+            
 
+#     def load_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+#         """Load data.
 
-    def split_data(
-        self,
-        movielens: pd.DataFrame,
-    ) ->  Tuple[pd.DataFrame, pd.DataFrame]:
-        
-        movielens['timestamp_rank'] = movielens.groupby(
-            'user_id')['timestamp'].rank(ascending=False, method='first')
-        movielens_train = movielens[movielens['timestamp_rank'] > 5]
-        movielens_test = movielens[movielens['timestamp_rank']<= 5]
+#         Returns:
+#             pd.DataFrame: Training and validation data.
+#         """
 
-        return (movielens_train, movielens_test)
+#         # logger.info(f"load data from: {date_from} to {date_to}")
+#         # data = self.load_sales_calendar_data(
+#         #     date_from=date_from,
+#         #     date_to=date_to,
+#         # )
+
+#         logger.info(f"load data from database")
+
+#         movies_data = self.load_movies_data()
+#         movies_dataset_dict = [d.dict() for d in movies_data]
+#         movies_df = pd.DataFrame(movies_dataset_dict)
+
+#         ratings_data = self.load_ratings_data()
+#         ratings_dataset_dict = [d.dict() for d in ratings_data]
+#         ratings_df = pd.DataFrame(ratings_dataset_dict)
+
+#         tags_data = self.load_tags_data()
+#         tags_dataset_dict = [d.dict() for d in tags_data]
+#         tags_df = pd.DataFrame(tags_dataset_dict)
+
+#         movies_tags_df = tags_df.groupby('movie_id').agg({'tag':list})
+#         movies_df = movies_df.merge(movies_tags_df, on="movie_id", how="left")
+#         movielens_df = ratings_df.merge(movies_df, on='movie_id', how="left")
+
+#         # print(movies_df)
+#         # print(ratings_df)
+#         # print(tags_df)
+#         # print(movies_tags_df)        
+#         # print(movielens_df)
+
+# #         df = movielens_df
+
+# #         logger.info(f"loaded: {df.shape}")
+# #         logger.info(
+# #             f"""df:
+# # {df}
+# # column:
+# # {df.columns}
+# # type:
+# # {df.dtypes}
+# #         """
+# #         )
+#         return (movielens_df, movies_df)
 
 
     def load_movies_data(self) -> List[Movies]:

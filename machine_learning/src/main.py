@@ -11,6 +11,7 @@ from src.middleware.logger import configure_logger
 # from src.ml_algos.lightgbm_regressor import LightGBMRegression
 # from src.ml_algos.models import get_model
 # from src.ml_algos.preprocess import LagSalesExtractor, PricesExtractor
+# from src.ml_algos.preprocess import RatingExtractor
 from src.repository.movies_repository import MoviesRepository
 from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
@@ -19,7 +20,7 @@ from src.usecase.data_loader_usecase import DataLoaderUsecase
 # from src.usecase.evaluation_usecase import EvaluationUsecase
 # from src.usecase.prediction_register_usecase import PredictionRegisterUsecase
 # from src.usecase.prediction_usecase import PredictionUsecase
-# from src.usecase.preprocess_usecase import PreprocessUsecase
+from src.usecase.preprocess_usecase import PreprocessUsecase
 # from src.usecase.training_usecase import TrainingUsecase
 
 logger = configure_logger(__name__)
@@ -83,71 +84,96 @@ def main(cfg: DictConfig):
         # prediction_date_to=cfg.period.prediction_date_to,
     )
 
-    movielens_train = raw_dataset.data_train.data
-    movielens_test = raw_dataset.data_test.data
-    movies = raw_dataset.data_movie
-    print(movielens_train)
-    print(movielens_test)
-    print(movies)
-
-    user_movie_matrix = movielens_train.pivot(index="user_id", columns="movie_id", values="rating")
-    print(user_movie_matrix)
-
-    train_keys = movielens_train[["user_id", "movie_id"]]
-    train_y = movielens_train.rating.values
-    test_keys = movielens_test[["user_id", "movie_id"]]
-
-    train_x = train_keys.copy()
-    test_x = test_keys.copy()
-
-    # 学習用データに存在するユーザーごとの評価値の最小値、最大値、平均値
-    # 及び、映画ごとの評価値の最小値、最大値、平均値を特徴量として追加
-    aggregators = ["min", "max", "mean"]
-    user_features = movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
-    movie_features = movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
-    for agg in aggregators:
-        train_x[f"u_{agg}"] = train_x["user_id"].map(user_features[agg])
-        test_x[f"u_{agg}"] = test_x["user_id"].map(user_features[agg])
-        # train_all_x[f"u_{agg}"] = train_all_x["user_id"].map(user_features[agg])
-        train_x[f"m_{agg}"] = train_x["movie_id"].map(movie_features[agg])
-        test_x[f"m_{agg}"] = test_x["movie_id"].map(movie_features[agg])
-        # train_all_x[f"m_{agg}"] = train_all_x["movie_id"].map(movie_features[agg])
-    # テスト用データにしか存在しないユーザーや映画の特徴量を、学習用データ全体の平均評価値で埋める
-    average_rating = train_y.mean()
-    test_x.fillna(average_rating, inplace=True)
-
-    import itertools
-
-    # 映画が特定の genre であるかどうかを表す特徴量を追加
-    movie_genres = movies[["movie_id", "genre"]].copy()
-
-    import ast
-
-    # 各ジャンルをリストに戻す
-    movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
-
-    # ジャンルのセットを作成
-    genres = set(itertools.chain(*movie_genres["genre"]))
-    print(genres)
+    # rating_extractor=RatingExtractor()
 
 
-    print(movie_genres)
-    genres = set(list(itertools.chain(*movie_genres.genre)))
-    print(genres)
-    genres = sorted(genres)
-    # genres = genres.sort_values(by=["genre"]).reset_index(drop=True)
-    print(genres)
+    preprocess_usecase = PreprocessUsecase(
+        # rating_extractor=rating_extractor,
+        # lag_sales_extractor=lag_sales_extractor,
+    )
 
-    for genre in genres:
-        print(genre)
-        movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(lambda x: genre in x)
-    movie_genres.drop("genre", axis=1, inplace=True)
-    train_x = train_x.merge(movie_genres, on="movie_id")
-    test_x = test_x.merge(movie_genres, on="movie_id")
-    # train_all_x = train_all_x.merge(movie_genres, on="movie_id")
+    preprocessed_dataset = preprocess_usecase.preprocess_dataset(
+        dataset=raw_dataset
+    )
 
-    print(train_x)
-    print(train_x.shape)
+    training_data_paths = preprocessed_dataset.training_data.save(
+        directory=cwd, prefix=f"{run_name}_training_"
+    )
+    validation_data_paths = preprocessed_dataset.validation_data.save(
+        directory=cwd, prefix=f"{run_name}_validation_"
+    )
+    # prediction_data_paths = preprocessed_dataset.prediction_data.save(
+    #     directory=cwd, prefix=f"{run_name}_prediction_"
+    # )
+    logger.info(
+        f"""save files
+training data: {training_data_paths}
+validation data: {validation_data_paths}
+    """
+    )
+
+    train_x = preprocessed_dataset.training_data.x.copy()
+    train_y = preprocessed_dataset.training_data.y.copy()
+    test_x = preprocessed_dataset.validation_data.x.copy()
+    test_y = preprocessed_dataset.validation_data.y.copy()
+
+    movie_rating_predict = preprocessed_dataset.validation_data.keys.copy()
+
+
+    # movielens_train = raw_dataset.data_train.data
+    # movielens_test = raw_dataset.data_test.data
+    # movies = raw_dataset.data_movies
+
+    # # user_movie_matrix = movielens_train.pivot(index="user_id", columns="movie_id", values="rating")
+
+    # train_keys = movielens_train[["user_id", "movie_id"]]
+    # # train_y = movielens_train.rating.values
+    # test_keys = movielens_test[["user_id", "movie_id"]]
+
+    # train_x = train_keys.copy()
+    # test_x = test_keys.copy()
+
+    # # 学習用データに存在するユーザーごとの評価値の最小値、最大値、平均値
+    # # 及び、映画ごとの評価値の最小値、最大値、平均値を特徴量として追加
+    # aggregators = ["min", "max", "mean"]
+    # user_features = movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
+    # movie_features = movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
+    # for agg in aggregators:
+    #     train_x[f"u_{agg}"] = train_x["user_id"].map(user_features[agg])
+    #     test_x[f"u_{agg}"] = test_x["user_id"].map(user_features[agg])
+    #     # train_all_x[f"u_{agg}"] = train_all_x["user_id"].map(user_features[agg])
+    #     train_x[f"m_{agg}"] = train_x["movie_id"].map(movie_features[agg])
+    #     test_x[f"m_{agg}"] = test_x["movie_id"].map(movie_features[agg])
+    #     # train_all_x[f"m_{agg}"] = train_all_x["movie_id"].map(movie_features[agg])
+    # # テスト用データにしか存在しないユーザーや映画の特徴量を、学習用データ全体の平均評価値で埋める
+    # average_rating = train_y.mean()
+    # test_x.fillna(average_rating, inplace=True)
+
+    # import itertools
+
+    # # 映画が特定の genre であるかどうかを表す特徴量を追加
+    # movie_genres = movies[["movie_id", "genre"]].copy()
+
+    # import ast
+
+    # # 各ジャンルをリストに戻す
+    # movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
+    # genres = set(list(itertools.chain(*movie_genres.genre)))
+    # # print(genres)
+    # genres = sorted(genres)
+    # # genres = genres.sort_values(by=["genre"]).reset_index(drop=True)
+    # print(genres)
+
+    # for genre in genres:
+    #     # print(genre)
+    #     movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(lambda x: genre in x)
+    # movie_genres.drop("genre", axis=1, inplace=True)
+    # train_x = train_x.merge(movie_genres, on="movie_id")
+    # test_x = test_x.merge(movie_genres, on="movie_id")
+    # # train_all_x = train_all_x.merge(movie_genres, on="movie_id")
+
+    # print(train_x)
+    # print(test_x)
 
     from sklearn.ensemble import RandomForestRegressor as RFR
 
@@ -158,7 +184,7 @@ def main(cfg: DictConfig):
     # テスト用データ内のユーザーと映画の組に対して評価値を予測する
     test_pred = reg.predict(test_x.values)
 
-    movie_rating_predict = test_keys.copy()
+    # movie_rating_predict = test_keys.copy()
     movie_rating_predict["rating_pred"] = test_pred
 
     print(movie_rating_predict)
