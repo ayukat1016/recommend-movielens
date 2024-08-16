@@ -3,6 +3,7 @@ name = "machine-learning"
 version = "0.1.0"
 description = ""
 authors = ["takuya.mouri <ayukat101699@gmail.com>"]
+license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -24,7 +25,7 @@ types-pyyaml = "6.0.12.20240724"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.8.0"
+black = "^24.1.1"
 flake8 = "^7.1.1"
 isort = "^5.13.2"
 mypy = "^1.11.1"

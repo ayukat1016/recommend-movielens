@@ -4,12 +4,12 @@ import mlflow  # type: ignore
 from omegaconf import DictConfig
 
 import hydra
-# from src.domain.prediction_data import PredictionDataset
-# from src.domain.training_data import TrainingDataset
+from src.domain.prediction_data import PredictionDataset
+from src.domain.training_data import TrainingDataset
 from src.infrastructure.database import PostgreSQLClient
 from src.middleware.logger import configure_logger
-# from src.ml_algos.lightgbm_regressor import LightGBMRegression
-# from src.ml_algos.models import get_model
+from src.ml_algos.lightgbm_regressor import LightGBMRegression
+from src.ml_algos.models import get_model
 # from src.ml_algos.preprocess import LagSalesExtractor, PricesExtractor
 from src.ml_algos.preprocess import RatingExtractor
 from src.ml_algos.preprocess import GenreExtractor
@@ -18,11 +18,11 @@ from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
 # from src.repository.sales_calendar_repository import SalesCalendarRepository
 from src.usecase.data_loader_usecase import DataLoaderUsecase
-# from src.usecase.evaluation_usecase import EvaluationUsecase
+from src.usecase.evaluation_usecase import EvaluationUsecase
 # from src.usecase.prediction_register_usecase import PredictionRegisterUsecase
-# from src.usecase.prediction_usecase import PredictionUsecase
+from src.usecase.prediction_usecase import PredictionUsecase
 from src.usecase.preprocess_usecase import PreprocessUsecase
-# from src.usecase.training_usecase import TrainingUsecase
+from src.usecase.training_usecase import TrainingUsecase
 
 logger = configure_logger(__name__)
 
@@ -114,14 +114,50 @@ validation data: {validation_data_paths}
     """
     )
 
-    train_x = preprocessed_dataset.training_data.x.copy()
-    train_y = preprocessed_dataset.training_data.y.copy()
-    test_x = preprocessed_dataset.validation_data.x.copy()
-    test_y = preprocessed_dataset.validation_data.y.copy()
-
-    movie_rating_predict = preprocessed_dataset.validation_data.keys.copy()
+    training_dataset = TrainingDataset(
+        training_data=preprocessed_dataset.training_data,
+        validation_data=preprocessed_dataset.validation_data,
+    )
 
 
+    model_class = get_model(model=cfg.model.name)
+    model = model_class()
+    if isinstance(model, LightGBMRegression):
+        model.reset_model(
+            params=cfg.model.params,
+            train_params=cfg.model.train_params,
+        )
+
+    training_usecase = TrainingUsecase()
+
+    training_usecase.train(
+        model=model,
+        training_data=training_dataset,
+    ) 
+
+    prediction_usecase = PredictionUsecase()
+    validation_prediction_dataset = PredictionDataset(
+        prediction_data=preprocessed_dataset.validation_data
+    )
+    validation_prediction = prediction_usecase.predict(
+        model=model,
+        data=validation_prediction_dataset,
+        # mask=valid_store_mask,
+    )
+
+    evaluation_usecase = EvaluationUsecase()
+
+    evaluation = evaluation_usecase.evaluate(
+        # date_id=validation_prediction.prediction.date_id.tolist(),
+        user_id=validation_prediction.prediction.user_id.tolist(),
+        movie_id=validation_prediction.prediction.movie_id.tolist(),
+        y_true=preprocessed_dataset.validation_data.y.rating.tolist(),
+        y_pred=validation_prediction.prediction.prediction.tolist(),
+    )
+         
+    feature_importance = evaluation_usecase.export_feature_importance(
+        model=model
+    )
     # movielens_train = raw_dataset.data_train.data
     # movielens_test = raw_dataset.data_test.data
     # movies = raw_dataset.data_movies
@@ -177,19 +213,27 @@ validation data: {validation_data_paths}
     # print(train_x)
     # print(test_x)
 
-    from sklearn.ensemble import RandomForestRegressor as RFR
 
-    # Random Forest を用いた学習
-    reg = RFR(n_jobs=-1, random_state=0)
-    reg.fit(train_x.values, train_y)
+    # train_x = preprocessed_dataset.training_data.x.copy()
+    # train_y = preprocessed_dataset.training_data.y.copy()
+    # test_x = preprocessed_dataset.validation_data.x.copy()
+    # test_y = preprocessed_dataset.validation_data.y.copy()
 
-    # テスト用データ内のユーザーと映画の組に対して評価値を予測する
-    test_pred = reg.predict(test_x.values)
+    # movie_rating_predict = preprocessed_dataset.validation_data.keys.copy()
 
-    # movie_rating_predict = test_keys.copy()
-    movie_rating_predict["rating_pred"] = test_pred
+    # from sklearn.ensemble import RandomForestRegressor as RFR
 
-    print(movie_rating_predict)
+    # # Random Forest を用いた学習
+    # reg = RFR(n_jobs=-1, random_state=0)
+    # reg.fit(train_x.values, train_y)
+
+    # # テスト用データ内のユーザーと映画の組に対して評価値を予測する
+    # test_pred = reg.predict(test_x.values)
+
+    # # movie_rating_predict = test_keys.copy()
+    # movie_rating_predict["rating_pred"] = test_pred
+
+    # print(movie_rating_predict)
 
 
 
