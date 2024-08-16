@@ -10,16 +10,13 @@ from src.infrastructure.database import PostgreSQLClient
 from src.middleware.logger import configure_logger
 from src.ml_algos.lightgbm_regressor import LightGBMRegression
 from src.ml_algos.models import get_model
-# from src.ml_algos.preprocess import LagSalesExtractor, PricesExtractor
 from src.ml_algos.preprocess import RatingExtractor
 from src.ml_algos.preprocess import GenreExtractor
 from src.repository.movies_repository import MoviesRepository
 from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
-# from src.repository.sales_calendar_repository import SalesCalendarRepository
 from src.usecase.data_loader_usecase import DataLoaderUsecase
 from src.usecase.evaluation_usecase import EvaluationUsecase
-# from src.usecase.prediction_register_usecase import PredictionRegisterUsecase
 from src.usecase.prediction_usecase import PredictionUsecase
 from src.usecase.preprocess_usecase import PreprocessUsecase
 from src.usecase.training_usecase import TrainingUsecase
@@ -142,14 +139,13 @@ validation data: {validation_data_paths}
     validation_prediction = prediction_usecase.predict(
         model=model,
         data=validation_prediction_dataset,
-        # mask=valid_store_mask,
     )
 
     evaluation_usecase = EvaluationUsecase()
 
     evaluation = evaluation_usecase.evaluate(
-        # date_id=validation_prediction.prediction.date_id.tolist(),
         user_id=validation_prediction.prediction.user_id.tolist(),
+        rank_id=validation_prediction.prediction.rank_id.tolist(),
         movie_id=validation_prediction.prediction.movie_id.tolist(),
         y_true=preprocessed_dataset.validation_data.y.rating.tolist(),
         y_pred=validation_prediction.prediction.prediction.tolist(),

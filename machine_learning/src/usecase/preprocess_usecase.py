@@ -42,8 +42,8 @@ class PreprocessUsecase(object):
 
         movielens_train, movielens_test = self.split_records(dataset.data_movielens)
         
-        train_keys_y = movielens_train[["user_id", "movie_id", "rating"]]
-        test_keys_y = movielens_test[["user_id", "movie_id", "rating"]]
+        train_keys_y = movielens_train[["user_id", "rank_id", "movie_id", "rating"]]
+        test_keys_y = movielens_test[["user_id", "rank_id", "movie_id", "rating"]]
 
         df_train = train_keys_y.copy()
         df_test = test_keys_y.copy()
@@ -78,10 +78,13 @@ class PreprocessUsecase(object):
         movielens: pd.DataFrame,
     ) ->  Tuple[pd.DataFrame, pd.DataFrame]:
         
-        movielens['timestamp_rank'] = movielens.groupby(
+        movielens['rank_id'] = movielens.groupby(
             'user_id')['timestamp'].rank(ascending=False, method='first')
-        movielens_train = movielens[movielens['timestamp_rank'] > 5]
-        movielens_test = movielens[movielens['timestamp_rank']<= 5]
+        movielens_train = movielens[movielens['rank_id'] > 5]
+        movielens_test = movielens[movielens['rank_id']<= 5]
+
+        movielens_train = movielens_train.sort_values(["user_id", "rank_id"]).reset_index(drop=True)
+        movielens_test = movielens_test.sort_values(["user_id", "rank_id"]).reset_index(drop=True)
 
         return (movielens_train, movielens_test)
 
@@ -99,9 +102,9 @@ class PreprocessUsecase(object):
             XY: dataset to be used for model training, evaluation and prediction.
         """
         df = raw_data
-        df = df.sort_values(["user_id", "movie_id"]).reset_index(drop=True)
+        df = df.sort_values(["user_id", "rank_id"]).reset_index(drop=True)
 
-        keys = df[["user_id", "movie_id"]]
+        keys = df[["user_id", "rank_id", "movie_id"]]
         data = self.split_data_target(
             keys=keys,
             data=df,
@@ -135,7 +138,7 @@ y:
         """
         y = data[["rating"]]
         x = data.drop(
-            ["user_id", "movie_id", "rating"],
+            ["user_id", "rank_id", "movie_id", "rating"],
             axis=1,
         )
         return XY(
