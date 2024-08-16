@@ -13,8 +13,8 @@ class XY:
     x: pd.DataFrame
     y: pd.DataFrame
 
-    # def __post_init__(self):
-    #     KeyDataSchema.validate(self.keys)
+    def __post_init__(self):
+        KeyDataSchema.validate(self.keys)
 
     def save(
         self,
@@ -58,16 +58,15 @@ def load_xy_from_files(
 
 
 class KeyDataSchema(SchemaModel):
-    store_id: Series[str] = Field(
+    user_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    item_id: Series[str] = Field(
+    rank_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    date_id: Series[int] = Field(
-        ge=1,
+    movie_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )

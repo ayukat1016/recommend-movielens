@@ -39,10 +39,6 @@ class DataLoaderUsecase(object):
         Returns:
             RawDataset: Data loaded from database.
         """
-        # movielens_df, movies_df= self.load_data()
-        # movielens_train, movielens_test = self.split_data(movielens)
-        # data_train = RawDataRatings(data=movielens_train)
-        # data_test = RawDataRatings(data=movielens_test)
 
         logger.info(f"load data from database")
 
@@ -68,56 +64,7 @@ class DataLoaderUsecase(object):
         )
             
 
-#     def load_data(self) -> tuple[pd.DataFrame, pd.DataFrame]:
-#         """Load data.
 
-#         Returns:
-#             pd.DataFrame: Training and validation data.
-#         """
-
-#         # logger.info(f"load data from: {date_from} to {date_to}")
-#         # data = self.load_sales_calendar_data(
-#         #     date_from=date_from,
-#         #     date_to=date_to,
-#         # )
-
-#         logger.info(f"load data from database")
-
-#         movies_data = self.load_movies_data()
-#         movies_dataset_dict = [d.dict() for d in movies_data]
-#         movies_df = pd.DataFrame(movies_dataset_dict)
-
-#         ratings_data = self.load_ratings_data()
-#         ratings_dataset_dict = [d.dict() for d in ratings_data]
-#         ratings_df = pd.DataFrame(ratings_dataset_dict)
-
-#         tags_data = self.load_tags_data()
-#         tags_dataset_dict = [d.dict() for d in tags_data]
-#         tags_df = pd.DataFrame(tags_dataset_dict)
-
-#         movies_tags_df = tags_df.groupby('movie_id').agg({'tag':list})
-#         movies_df = movies_df.merge(movies_tags_df, on="movie_id", how="left")
-#         movielens_df = ratings_df.merge(movies_df, on='movie_id', how="left")
-
-#         # print(movies_df)
-#         # print(ratings_df)
-#         # print(tags_df)
-#         # print(movies_tags_df)        
-#         # print(movielens_df)
-
-# #         df = movielens_df
-
-# #         logger.info(f"loaded: {df.shape}")
-# #         logger.info(
-# #             f"""df:
-# # {df}
-# # column:
-# # {df.columns}
-# # type:
-# # {df.dtypes}
-# #         """
-# #         )
-#         return (movielens_df, movies_df)
 
 
     def load_movies_data(self) -> List[Movies]:
@@ -136,8 +83,6 @@ class DataLoaderUsecase(object):
         limit = 10000
         while True:
             movies_data = self.movies_repository.select(
-                # date_from=date_from,
-                # date_to=date_to,
                 limit=limit,
                 offset=position,
             )

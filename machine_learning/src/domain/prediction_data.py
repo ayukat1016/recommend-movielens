@@ -17,8 +17,8 @@ class PredictionDataset:
 class Prediction:
     prediction: pd.DataFrame
 
-    # def __post_init__(self):
-    #     PredictionDataSchema.validate(self.prediction)
+    def __post_init__(self):
+        PredictionDataSchema.validate(self.prediction)
 
     def save(
         self,
@@ -32,22 +32,21 @@ class Prediction:
 
 
 class PredictionDataSchema(SchemaModel):
-    store_id: Series[str] = Field(
+    user_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    item_id: Series[str] = Field(
+    rank_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    date_id: Series[int] = Field(
-        ge=1,
+    movie_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
     prediction: Series[float] = Field(
         ge=0.0,
-        le=1000.0,
+        le=5.0,
         nullable=False,
         coerce=True,
     )

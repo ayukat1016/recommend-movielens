@@ -6,69 +6,81 @@ from pandera.typing import Series
 from src.domain.common_data import XY
 
 
-# class ExtractedPriceSchema(SchemaModel):
-#     price_max: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     price_min: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     price_std: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     price_mean: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     price_norm: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     price_nunique: Series[int] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     item_nunique: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
+class ExtractedRatingSchema(SchemaModel):
+    # user_id: Series[str] = Field(
+    #     nullable=False,
+    #     coerce=True,
+    # )
+    # rank_id: Series[str] = Field(
+    #     nullable=False,
+    #     coerce=True,
+    # )
+    # movie_id: Series[str] = Field(
+    #     nullable=False,
+    #     coerce=True,
+    # )
+    # rating: Series[float] = Field(
+    #     ge=0.0,
+    #     le=5.0,
+    #     nullable=False,
+    #     coerce=True,
+    # )
+    u_min: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
+    m_min: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
+    u_max: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
+    m_max: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
+    u_mean: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
+    m_mean: Series[float] = Field(
+        ge=0.0,
+        le=5.0,
+        nullable=True,
+        coerce=True,
+    )
 
-#     class Config:
-#         name = "ExtractedPriceSchema"
-#         strict = True
-#         coerce = True
+    class Config:
+        name = "ExtractedRatingSchema"
+        strict = True
+        coerce = True
 
 
-# class ExtractedLagSalesSchema(SchemaModel):
-#     lag_21_7: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_8: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
+class ExtractedGenreSchema(SchemaModel):
+    lag_21_7: Series[float] = Field(
+        ge=0.0,
+        le=1000.0,
+        nullable=True,
+        coerce=True,
+    )
+    lag_21_8: Series[float] = Field(
+        ge=0.0,
+        le=1000.0,
+        nullable=True,
+        coerce=True,
+    )
 #     lag_21_9: Series[float] = Field(
 #         ge=0.0,
 #         le=1000.0,
@@ -196,10 +208,10 @@ from src.domain.common_data import XY
 #         coerce=True,
 #     )
 
-#     class Config:
-#         name = "ExtractedLagSalesSchema"
-#         strict = True
-#         coerce = True
+    class Config:
+        name = "ExtractedGenreSchema"
+        strict = True
+        coerce = True
 
 
 @dataclass(frozen=True)

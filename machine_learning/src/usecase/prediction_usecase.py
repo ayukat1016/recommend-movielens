@@ -15,7 +15,6 @@ class PredictionUsecase(object):
         self,
         model: AbstractModel,
         data: PredictionDataset,
-        # mask: pd.DataFrame,
     ) -> Prediction:
         logger.info(f"start prediction: {model.name}...")
 

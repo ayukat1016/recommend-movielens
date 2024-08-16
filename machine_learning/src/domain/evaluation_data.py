@@ -13,8 +13,8 @@ class Evaluation:
     root_mean_squared_error: float
     mean_absolute_error: float
 
-    # def __post_init__(self):
-    #     EvaluationDataSchema.validate(self.data)
+    def __post_init__(self):
+        EvaluationDataSchema.validate(self.data)
 
     def save_data(
         self,
@@ -28,28 +28,27 @@ class Evaluation:
 
 
 class EvaluationDataSchema(SchemaModel):
-    store_id: Series[str] = Field(
+    user_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    item_id: Series[str] = Field(
+    rank_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
-    date_id: Series[int] = Field(
-        ge=0,
+    movie_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
     y_true: Series[float] = Field(
         ge=0.0,
-        le=100.0,
+        le=5.0,
         nullable=False,
         coerce=True,
     )
     y_pred: Series[float] = Field(
         ge=0.0,
-        le=1000.0,
+        le=5.0,
         nullable=False,
         coerce=True,
     )

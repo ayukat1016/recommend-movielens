@@ -3,8 +3,9 @@ import itertools
 import ast
 import pandas as pd
 
-# from src.domain.preprocessed_data import (ExtractedLagSalesSchema,
-#                                           ExtractedPriceSchema)
+from src.domain.preprocessed_data import ExtractedGenreSchema
+from src.domain.preprocessed_data import ExtractedRatingSchema
+
 from src.middleware.logger import configure_logger
 
 logger = configure_logger(__name__)
@@ -46,7 +47,9 @@ class RatingExtractor(AbstractExtractor):
             df[f"u_{agg}"] = df["user_id"].map(user_features[agg])
             df[f"m_{agg}"] = df["movie_id"].map(movie_features[agg])
 
-#         ExtractedRatingSchema.validate(df)
+        # df = df.iloc[:, 4:]
+
+        # ExtractedRatingSchema.validate(df)
         logger.info(
             f"""rating data extracted:
 {df}
@@ -85,6 +88,8 @@ class GenreExtractor(AbstractExtractor):
             movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(lambda x: genre in x)
         movie_genres.drop("genre", axis=1, inplace=True)
         df = df.merge(movie_genres, on="movie_id")
+
+        # df = df.iloc[:, 10:]
 
         # ExtractedGenreSchema.validate(df)
         logger.info(

@@ -1,4 +1,4 @@
-name: demand_forecasting_m5
+name: recommend_movielens
 model:
   name: lightgbm_regression
   params:
