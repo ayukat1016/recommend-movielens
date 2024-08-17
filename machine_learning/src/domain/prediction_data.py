@@ -36,7 +36,7 @@ class PredictionDataSchema(SchemaModel):
         nullable=False,
         coerce=True,
     )
-    rank_id: Series[str] = Field(
+    recency_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )

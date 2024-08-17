@@ -40,7 +40,7 @@ class RatingExtractor(AbstractExtractor):
         Returns:
             pd.DataFrame: DataFrame with year, month and day of week extracted.
         """
-        df_rating = df[["user_id", "rank_id", "movie_id", "rating"]].copy()
+        df_rating = df[["user_id", "recency_id", "movie_id", "rating"]].copy()
         aggregators: list = ["min", "max", "mean"]
         user_features = (
             movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
@@ -84,7 +84,7 @@ class GenreExtractor(AbstractExtractor):
         Returns:
             pd.DataFrame: DataFrame with year, month and day of week extracted.
         """
-        df_genre = df[["user_id", "rank_id", "movie_id", "rating"]].copy()
+        df_genre = df[["user_id", "recency_id", "movie_id", "rating"]].copy()
         movie_genres = movies[["movie_id", "genre"]].copy()
         movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
         genres = list(set(itertools.chain(*movie_genres.genre)))

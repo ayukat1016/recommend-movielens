@@ -23,18 +23,18 @@ class PredictionUsecase(object):
         d = [
             dict(
                 user_id=u,
-                rank_id=r,
+                recency_id=r,
                 movie_id=m,
                 prediction=p,
             )
             for u, r, m, p in zip(
                 data.prediction_data.keys["user_id"].tolist(),
-                data.prediction_data.keys["rank_id"].tolist(),
+                data.prediction_data.keys["recency_id"].tolist(),
                 data.prediction_data.keys["movie_id"].tolist(),
                 prediction,
             )
         ]
-        df = pd.DataFrame(d).sort_values(["user_id", "rank_id"]).reset_index(drop=True)
+        df = pd.DataFrame(d).sort_values(["user_id", "recency_id"]).reset_index(drop=True)
         prediction_output = Prediction(prediction=df)
 
         logger.info(f"done prediction: {model.name}")

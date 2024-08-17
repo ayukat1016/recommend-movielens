@@ -149,7 +149,7 @@ def main(cfg: DictConfig):
 
         evaluation = evaluation_usecase.evaluate(
             user_id=validation_prediction.prediction.user_id.tolist(),
-            rank_id=validation_prediction.prediction.rank_id.tolist(),
+            recency_id=validation_prediction.prediction.recency_id.tolist(),
             movie_id=validation_prediction.prediction.movie_id.tolist(),
             y_true=preprocessed_dataset.validation_data.y.rating.tolist(),
             y_pred=validation_prediction.prediction.prediction.tolist(),

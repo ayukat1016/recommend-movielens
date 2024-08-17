@@ -18,7 +18,7 @@ class EvaluationUsecase(object):
     def evaluate(
         self,
         user_id: List[str],
-        rank_id: List[str],
+        recency_id: List[str],
         movie_id: List[str],
         y_true: List[float],
         y_pred: List[float],
@@ -38,15 +38,15 @@ class EvaluationUsecase(object):
         d = [
             dict(
                 user_id=u,
-                rank_id=r,
+                recency_id=r,
                 movie_id=m,
                 y_true=t,
                 y_pred=p,
             )
-            for u, r, m, t, p in zip(user_id, rank_id, movie_id, y_true, y_pred)
+            for u, r, m, t, p in zip(user_id, recency_id, movie_id, y_true, y_pred)
         ]
         data = (
-            pd.DataFrame(d).sort_values(["user_id", "rank_id"]).reset_index(drop=True)
+            pd.DataFrame(d).sort_values(["user_id", "recency_id"]).reset_index(drop=True)
         )
         logger.info(f"done evaluation")
         logger.info(
