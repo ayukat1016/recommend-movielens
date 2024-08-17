@@ -48,20 +48,14 @@ class PreprocessUsecase(object):
         df_train = train_keys_y.copy()
         df_test = test_keys_y.copy()
 
-        # df_train_rating = self.rating_extractor.run(movielens_train, df_train)
-        # df_test_rating = self.rating_extractor.run(movielens_train, df_test)
+        df_train_rating = self.rating_extractor.run(movielens_train, df_train)
+        df_test_rating = self.rating_extractor.run(movielens_train, df_test)
 
-        # df_train_genre = self.genre_extractor.run(dataset.data_movies, df_train)
-        # df_test_genre = self.genre_extractor.run(dataset.data_movies, df_test)
+        df_train_genre = self.genre_extractor.run(dataset.data_movies, df_train)
+        df_test_genre = self.genre_extractor.run(dataset.data_movies, df_test)
 
-        # df_train = pd.concat([df_train, df_train_rating, df_train_genre], axis=1)
-        # df_test = pd.concat([df_test, df_test_rating, df_test_genre], axis=1)
-
-        df_train = self.rating_extractor.run(movielens_train, df_train)
-        df_test = self.rating_extractor.run(movielens_train, df_test)
-
-        df_train = self.genre_extractor.run(dataset.data_movies, df_train)
-        df_test = self.genre_extractor.run(dataset.data_movies, df_test)
+        df_train = pd.concat([df_train, df_train_rating, df_train_genre], axis=1)
+        df_test = pd.concat([df_test, df_test_rating, df_test_genre], axis=1)
 
         average_rating = df_train["rating"].mean()
         df_test.fillna(average_rating, inplace=True)

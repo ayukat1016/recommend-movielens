@@ -7,24 +7,6 @@ from src.domain.common_data import XY
 
 
 class ExtractedRatingSchema(SchemaModel):
-    # user_id: Series[str] = Field(
-    #     nullable=False,
-    #     coerce=True,
-    # )
-    # rank_id: Series[str] = Field(
-    #     nullable=False,
-    #     coerce=True,
-    # )
-    # movie_id: Series[str] = Field(
-    #     nullable=False,
-    #     coerce=True,
-    # )
-    # rating: Series[float] = Field(
-    #     ge=0.0,
-    #     le=5.0,
-    #     nullable=False,
-    #     coerce=True,
-    # )
     u_min: Series[float] = Field(
         ge=0.0,
         le=5.0,
@@ -69,144 +51,87 @@ class ExtractedRatingSchema(SchemaModel):
 
 
 class ExtractedGenreSchema(SchemaModel):
-    lag_21_7: Series[float] = Field(
-        ge=0.0,
-        le=1000.0,
+    is_no_genres_listed: Series[bool] = Field(
         nullable=True,
         coerce=True,
     )
-    lag_21_8: Series[float] = Field(
-        ge=0.0,
-        le=1000.0,
-        nullable=True,
+    is_Action: Series[bool] = Field(
+        nullable=False,
         coerce=True,
     )
-#     lag_21_9: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_10: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_11: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_12: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_13: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_14: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_15: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_16: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_17: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_18: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_19: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_20: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     lag_21_21: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_mean_7: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_std_7: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_mean_14: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_std_14: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_mean_30: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_std_30: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_mean_60: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
-#     rolling_std_60: Series[float] = Field(
-#         ge=0.0,
-#         le=1000.0,
-#         nullable=True,
-#         coerce=True,
-#     )
+    is_Adventure: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Animation: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Children: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Comedy: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Crime: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Documentary: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Drama: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Fantasy: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Film_Noir: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Horror: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_IMAX: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Musical: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Mystery: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Romance: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Sci_Fi: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Thriller: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_War: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    is_Western: Series[bool] = Field(
+        nullable=False,
+        coerce=True,
+    )
+
 
     class Config:
         name = "ExtractedGenreSchema"
@@ -218,4 +143,3 @@ class ExtractedGenreSchema(SchemaModel):
 class PreprocessedDataset:
     training_data: XY
     validation_data: XY
-    # prediction_data: XY
