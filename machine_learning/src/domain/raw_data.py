@@ -5,7 +5,6 @@ from pandera import Field, SchemaModel
 from pandera.typing import Series
 
 
-
 @dataclass(frozen=True)
 class RawDataset:
     data_movielens: pd.DataFrame
@@ -13,6 +12,7 @@ class RawDataset:
 
     def __post_init__(self):
         RawDataSchema.validate(self.data_movielens)
+
 
 class RawDataSchema(SchemaModel):
     user_id: Series[str] = Field(

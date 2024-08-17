@@ -1,8 +1,7 @@
-
-
+from typing import Tuple
 
 import pandas as pd
-from typing import Tuple
+
 from src.domain.common_data import XY
 from src.domain.preprocessed_data import PreprocessedDataset
 from src.domain.raw_data import RawDataset
@@ -21,8 +20,8 @@ class PreprocessUsecase(object):
         """Preprocess usecase.
 
         Args:
-            prices_extractor (AbstractExtractor): Algorithm to extract prices statitics.
-            lag_sales_extractor (AbstractExtractor): Algorithm to extract lag sales data.
+            rating_extractor (AbstractExtractor): Algorithm to extract rating statitics.
+            genre_extractor (AbstractExtractor): Algorithm to extract genre boolean.
         """
         self.rating_extractor = rating_extractor
         self.genre_extractor = genre_extractor
@@ -37,11 +36,11 @@ class PreprocessUsecase(object):
             dataset (RawDataset): Dataset to be transformed.
 
         Returns:
-            PreprocessedDataset: Preprocessed data with separated to training, validation and prediction.
+            PreprocessedDataset: Preprocessed data with separated to training and validation.
         """
 
         movielens_train, movielens_test = self.split_records(dataset.data_movielens)
-        
+
         train_keys_y = movielens_train[["user_id", "rank_id", "movie_id", "rating"]]
         test_keys_y = movielens_test[["user_id", "rank_id", "movie_id", "rating"]]
 
@@ -75,22 +74,25 @@ class PreprocessUsecase(object):
             validation_data=validation_data,
         )
 
-
     def split_records(
         self,
         movielens: pd.DataFrame,
-    ) ->  Tuple[pd.DataFrame, pd.DataFrame]:
-        
-        movielens['rank_id'] = movielens.groupby(
-            'user_id')['timestamp'].rank(ascending=False, method='first')
-        movielens_train = movielens[movielens['rank_id'] > 5]
-        movielens_test = movielens[movielens['rank_id']<= 5]
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
-        movielens_train = movielens_train.sort_values(["user_id", "rank_id"]).reset_index(drop=True)
-        movielens_test = movielens_test.sort_values(["user_id", "rank_id"]).reset_index(drop=True)
+        movielens["rank_id"] = movielens.groupby("user_id")["timestamp"].rank(
+            ascending=False, method="first"
+        )
+        movielens_train = movielens[movielens["rank_id"] > 5]
+        movielens_test = movielens[movielens["rank_id"] <= 5]
+
+        movielens_train = movielens_train.sort_values(
+            ["user_id", "rank_id"]
+        ).reset_index(drop=True)
+        movielens_test = movielens_test.sort_values(["user_id", "rank_id"]).reset_index(
+            drop=True
+        )
 
         return (movielens_train, movielens_test)
-
 
     def split_columns(
         self,

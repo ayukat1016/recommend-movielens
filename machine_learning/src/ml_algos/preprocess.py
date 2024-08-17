@@ -1,11 +1,10 @@
-from abc import ABC, abstractmethod
-import itertools
 import ast
+import itertools
+from abc import ABC, abstractmethod
+
 import pandas as pd
 
-from src.domain.preprocessed_data import ExtractedGenreSchema
-from src.domain.preprocessed_data import ExtractedRatingSchema
-
+from src.domain.preprocessed_data import ExtractedGenreSchema, ExtractedRatingSchema
 from src.middleware.logger import configure_logger
 
 logger = configure_logger(__name__)
@@ -30,7 +29,7 @@ class RatingExtractor(AbstractExtractor):
 
     def run(
         self,
-        movielens_train: pd.DataFrame,  
+        movielens_train: pd.DataFrame,
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         """Extract statistics from price column.
@@ -43,8 +42,12 @@ class RatingExtractor(AbstractExtractor):
         """
         df_rating = df[["user_id", "rank_id", "movie_id", "rating"]].copy()
         aggregators: list = ["min", "max", "mean"]
-        user_features = movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
-        movie_features = movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
+        user_features = (
+            movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
+        )
+        movie_features = (
+            movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
+        )
         for agg in aggregators:
             df_rating[f"u_{agg}"] = df_rating["user_id"].map(user_features[agg])
             df_rating[f"m_{agg}"] = df_rating["movie_id"].map(movie_features[agg])
@@ -70,7 +73,7 @@ class GenreExtractor(AbstractExtractor):
 
     def run(
         self,
-        movies: pd.DataFrame,  
+        movies: pd.DataFrame,
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         """Extract statistics from price column.
@@ -81,18 +84,22 @@ class GenreExtractor(AbstractExtractor):
         Returns:
             pd.DataFrame: DataFrame with year, month and day of week extracted.
         """
-        df_genre = df[["user_id", "rank_id", "movie_id", "rating"]].copy()        
+        df_genre = df[["user_id", "rank_id", "movie_id", "rating"]].copy()
         movie_genres = movies[["movie_id", "genre"]].copy()
         movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
         genres = list(set(itertools.chain(*movie_genres.genre)))
         genres = sorted(genres)
 
         for genre in genres:
-            movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(lambda x: genre in x)
+            movie_genres.loc[:, f"is_{genre}"] = movie_genres.genre.apply(
+                lambda x: genre in x
+            )
         movie_genres.drop("genre", axis=1, inplace=True)
         df_genre = df_genre.merge(movie_genres, on="movie_id")
 
-        df_genre = df_genre.rename(columns={"is_(no genres listed)": "is_no_genres_listed"})
+        df_genre = df_genre.rename(
+            columns={"is_(no genres listed)": "is_no_genres_listed"}
+        )
         df_genre = df_genre.rename(columns={"is_Film-Noir": "is_Film_Noir"})
         df_genre = df_genre.rename(columns={"is_Sci-Fi": "is_Sci_Fi"})
 

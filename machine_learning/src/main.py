@@ -10,8 +10,7 @@ from src.infrastructure.database import PostgreSQLClient
 from src.middleware.logger import configure_logger
 from src.ml_algos.lightgbm_regressor import LightGBMRegression
 from src.ml_algos.models import get_model
-from src.ml_algos.preprocess import RatingExtractor
-from src.ml_algos.preprocess import GenreExtractor
+from src.ml_algos.preprocess import GenreExtractor, RatingExtractor
 from src.repository.movies_repository import MoviesRepository
 from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
@@ -36,16 +35,16 @@ def main(cfg: DictConfig):
 
     logger.info(f"current working directory: {cwd}")
     logger.info(f"run_name: {run_name}")
-#     logger.info(
-#         f"""parameters:
-# training_date_from: {cfg.period.training_date_from}
-# training_date_to: {cfg.period.training_date_to}
-# validation_date_from: {cfg.period.validation_date_from}
-# validation_date_to: {cfg.period.validation_date_to}
-# prediction_date_from: {cfg.period.prediction_date_from}
-# prediction_date_to: {cfg.period.prediction_date_to}
-#     """
-#     )
+    #     logger.info(
+    #         f"""parameters:
+    # training_date_from: {cfg.period.training_date_from}
+    # training_date_to: {cfg.period.training_date_to}
+    # validation_date_from: {cfg.period.validation_date_from}
+    # validation_date_to: {cfg.period.validation_date_to}
+    # prediction_date_from: {cfg.period.prediction_date_from}
+    # prediction_date_to: {cfg.period.prediction_date_to}
+    #     """
+    #     )
 
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
     mlflow.set_experiment(cfg.name)
@@ -55,12 +54,12 @@ def main(cfg: DictConfig):
         mlflow.log_artifact(os.path.join(cwd, ".hydra/hydra.yaml"))
         mlflow.log_artifact(os.path.join(cwd, ".hydra/overrides.yaml"))
 
-    #     mlflow.log_param("training_date_from", cfg.period.training_date_from)
-    #     mlflow.log_param("training_date_to", cfg.period.training_date_to)
-    #     mlflow.log_param("validation_date_from", cfg.period.validation_date_from)
-    #     mlflow.log_param("validation_date_to", cfg.period.validation_date_to)
-    #     mlflow.log_param("prediction_date_from", cfg.period.prediction_date_from)
-    #     mlflow.log_param("prediction_date_to", cfg.period.prediction_date_to)
+        #     mlflow.log_param("training_date_from", cfg.period.training_date_from)
+        #     mlflow.log_param("training_date_to", cfg.period.training_date_to)
+        #     mlflow.log_param("validation_date_from", cfg.period.validation_date_from)
+        #     mlflow.log_param("validation_date_to", cfg.period.validation_date_to)
+        #     mlflow.log_param("prediction_date_from", cfg.period.prediction_date_from)
+        #     mlflow.log_param("prediction_date_to", cfg.period.prediction_date_to)
 
         db_client = PostgreSQLClient()
         movies_repository = MoviesRepository(db_client=db_client)
@@ -82,9 +81,8 @@ def main(cfg: DictConfig):
             # prediction_date_to=cfg.period.prediction_date_to,
         )
 
-        rating_extractor=RatingExtractor()
-        genre_extractor=GenreExtractor()
-
+        rating_extractor = RatingExtractor()
+        genre_extractor = GenreExtractor()
 
         preprocess_usecase = PreprocessUsecase(
             rating_extractor=rating_extractor,
@@ -101,9 +99,6 @@ def main(cfg: DictConfig):
         validation_data_paths = preprocessed_dataset.validation_data.save(
             directory=cwd, prefix=f"{run_name}_validation_"
         )
-        # prediction_data_paths = preprocessed_dataset.prediction_data.save(
-        #     directory=cwd, prefix=f"{run_name}_prediction_"
-        # )
         logger.info(
             f"""save files
     training data: {training_data_paths}
@@ -123,7 +118,6 @@ def main(cfg: DictConfig):
             validation_data=preprocessed_dataset.validation_data,
         )
 
-
         model_class = get_model(model=cfg.model.name)
         model = model_class()
         if isinstance(model, LightGBMRegression):
@@ -140,7 +134,7 @@ def main(cfg: DictConfig):
         training_usecase.train(
             model=model,
             training_data=training_dataset,
-        ) 
+        )
 
         prediction_usecase = PredictionUsecase()
         validation_prediction_dataset = PredictionDataset(
@@ -160,19 +154,13 @@ def main(cfg: DictConfig):
             y_true=preprocessed_dataset.validation_data.y.rating.tolist(),
             y_pred=validation_prediction.prediction.prediction.tolist(),
         )
-            
-        feature_importance = evaluation_usecase.export_feature_importance(
-            model=model
-        )
+
+        feature_importance = evaluation_usecase.export_feature_importance(model=model)
 
         base_file_name = f"{run_name}"
-        model_file_path = os.path.join(
-            cwd, f"{base_file_name}_model.txt"
-        )
+        model_file_path = os.path.join(cwd, f"{base_file_name}_model.txt")
         model_file_path = model.save(file_path=model_file_path)
-        evaluation_file_path = os.path.join(
-            cwd, f"{base_file_name}_evaluation.csv"
-        )
+        evaluation_file_path = os.path.join(cwd, f"{base_file_name}_evaluation.csv")
         evaluation_file_path = evaluation.save_data(file_path=evaluation_file_path)
         feature_importance_file_path = os.path.join(
             cwd, f"{base_file_name}_feature_importance.csv"
@@ -181,13 +169,10 @@ def main(cfg: DictConfig):
             file_path=feature_importance_file_path
         )
 
-
         mlflow.log_artifact(model_file_path, "model")
         mlflow.log_artifact(evaluation_file_path, "evaluation")
         mlflow.log_artifact(feature_importance_file_path, "feature_importance")
-        mlflow.log_metric(
-            f"mean_absolute_error", evaluation.mean_absolute_error
-        )
+        mlflow.log_metric(f"mean_absolute_error", evaluation.mean_absolute_error)
         mlflow.log_metric(
             f"root_mean_squared_error",
             evaluation.root_mean_squared_error,

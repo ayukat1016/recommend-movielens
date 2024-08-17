@@ -132,7 +132,6 @@ class ExtractedGenreSchema(SchemaModel):
         coerce=True,
     )
 
-
     class Config:
         name = "ExtractedGenreSchema"
         strict = True

@@ -18,9 +18,7 @@ class PredictionUsecase(object):
     ) -> Prediction:
         logger.info(f"start prediction: {model.name}...")
 
-        prediction = model.predict(
-            x=data.prediction_data.x.reset_index(drop=True)
-        )
+        prediction = model.predict(x=data.prediction_data.x.reset_index(drop=True))
 
         d = [
             dict(
@@ -36,11 +34,7 @@ class PredictionUsecase(object):
                 prediction,
             )
         ]
-        df = (
-            pd.DataFrame(d)
-            .sort_values(["user_id", "rank_id"])
-            .reset_index(drop=True)
-        )
+        df = pd.DataFrame(d).sort_values(["user_id", "rank_id"]).reset_index(drop=True)
         prediction_output = Prediction(prediction=df)
 
         logger.info(f"done prediction: {model.name}")

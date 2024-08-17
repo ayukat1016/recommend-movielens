@@ -1,5 +1,5 @@
-from typing import List, Tuple
-import numpy as np
+from typing import List
+
 import pandas as pd
 
 from src.domain.raw_data import RawDataset
@@ -24,9 +24,9 @@ class DataLoaderUsecase(object):
         """Data loader usecase.
 
         Args:
-            calendar_repository (AbstractCalendarRepository): Repository to load data for calendar.
-            prices_repository (AbstractPricesRepository): Repository to load data for prices.
-            sales_calendar_repository  (AbstractSalesCalendarRepository): Repository to load data for training.
+            movies_repository (AbstractMoviesRepository): Repository to load data for movies.
+            ratings_repository (AbstractRatingsRepository): Repository to load data for ratings.
+            tags_repository  (AbstractTagsRepository): Repository to load data for tags.
         """
 
         self.movies_repository = movies_repository
@@ -34,7 +34,7 @@ class DataLoaderUsecase(object):
         self.tags_repository = tags_repository
 
     def load_dataset(self) -> RawDataset:
-        """Load dataset for training, validation and prediction.
+        """Load dataset for training and validation.
 
         Returns:
             RawDataset: Data loaded from database.
@@ -54,28 +54,20 @@ class DataLoaderUsecase(object):
         tags_dataset_dict = [d.dict() for d in tags_data]
         tags_df = pd.DataFrame(tags_dataset_dict)
 
-        movies_tags_df = tags_df.groupby('movie_id').agg({'tag':list})
+        movies_tags_df = tags_df.groupby("movie_id").agg({"tag": list})
         movies_df = movies_df.merge(movies_tags_df, on="movie_id", how="left")
-        movielens_df = ratings_df.merge(movies_df, on='movie_id', how="left")
+        movielens_df = ratings_df.merge(movies_df, on="movie_id", how="left")
 
         return RawDataset(
             data_movielens=movielens_df,
             data_movies=movies_df,
         )
-            
-
-
-
 
     def load_movies_data(self) -> List[Movies]:
-        """Load data from sales and calendar table as training and validation data.
-
-        Args:
-            date_from (int): Starting date.
-            date_to (int): Last date.
+        """Load data from movies table.
 
         Returns:
-            List[SalesCalendar]: training and validation data.
+            List[Movies]: movies data.
         """
 
         data: List[Movies] = []
@@ -94,10 +86,10 @@ class DataLoaderUsecase(object):
         return data
 
     def load_ratings_data(self) -> List[Ratings]:
-        """Load data from calendar table.
+        """Load data from ratings table.
 
         Returns:
-            List[Calendar]: calendar data.
+            List[Ratings]: ratings data.
         """
 
         data: List[Ratings] = []
@@ -116,10 +108,10 @@ class DataLoaderUsecase(object):
         return data
 
     def load_tags_data(self) -> List[Tags]:
-        """Load data from prices table.
+        """Load data from tags table.
 
         Returns:
-            List[Prices]: prices data.
+            List[Tags]: tags data.
         """
 
         data: List[Tags] = []
