@@ -29,6 +29,7 @@ class PreprocessUsecase(object):
     def preprocess_dataset(
         self,
         dataset: RawDataset,
+        validation_records: int,
     ) -> PreprocessedDataset:
         """Run preprocess for raw dataset.
 
@@ -39,7 +40,9 @@ class PreprocessUsecase(object):
             PreprocessedDataset: Preprocessed data with separated to training and validation.
         """
 
-        movielens_train, movielens_test = self.split_records(dataset.data_movielens)
+        movielens_train, movielens_test = self.split_records(
+            dataset.data_movielens, validation_records
+        )
 
         train_keys_y = movielens_train[["user_id", "recency_id", "movie_id", "rating"]]
         test_keys_y = movielens_test[["user_id", "recency_id", "movie_id", "rating"]]
@@ -77,20 +80,21 @@ class PreprocessUsecase(object):
     def split_records(
         self,
         movielens: pd.DataFrame,
+        validation_records: int,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
         movielens["recency_id"] = movielens.groupby("user_id")["timestamp"].rank(
             ascending=False, method="first"
         )
-        movielens_train = movielens[movielens["recency_id"] > 5]
-        movielens_test = movielens[movielens["recency_id"] <= 5]
+        movielens_train = movielens[movielens["recency_id"] > validation_records]
+        movielens_test = movielens[movielens["recency_id"] <= validation_records]
 
         movielens_train = movielens_train.sort_values(
             ["user_id", "recency_id"]
         ).reset_index(drop=True)
-        movielens_test = movielens_test.sort_values(["user_id", "recency_id"]).reset_index(
-            drop=True
-        )
+        movielens_test = movielens_test.sort_values(
+            ["user_id", "recency_id"]
+        ).reset_index(drop=True)
 
         return (movielens_train, movielens_test)
 

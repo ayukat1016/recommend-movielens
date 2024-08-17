@@ -35,16 +35,11 @@ def main(cfg: DictConfig):
 
     logger.info(f"current working directory: {cwd}")
     logger.info(f"run_name: {run_name}")
-    #     logger.info(
-    #         f"""parameters:
-    # training_date_from: {cfg.period.training_date_from}
-    # training_date_to: {cfg.period.training_date_to}
-    # validation_date_from: {cfg.period.validation_date_from}
-    # validation_date_to: {cfg.period.validation_date_to}
-    # prediction_date_from: {cfg.period.prediction_date_from}
-    # prediction_date_to: {cfg.period.prediction_date_to}
-    #     """
-    #     )
+    logger.info(
+        f"""parameters:
+    validation_records: {cfg.period.validation.user_recency_records}
+        """
+    )
 
     mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI", "http://mlflow:5000"))
     mlflow.set_experiment(cfg.name)
@@ -54,12 +49,9 @@ def main(cfg: DictConfig):
         mlflow.log_artifact(os.path.join(cwd, ".hydra/hydra.yaml"))
         mlflow.log_artifact(os.path.join(cwd, ".hydra/overrides.yaml"))
 
-        #     mlflow.log_param("training_date_from", cfg.period.training_date_from)
-        #     mlflow.log_param("training_date_to", cfg.period.training_date_to)
-        #     mlflow.log_param("validation_date_from", cfg.period.validation_date_from)
-        #     mlflow.log_param("validation_date_to", cfg.period.validation_date_to)
-        #     mlflow.log_param("prediction_date_from", cfg.period.prediction_date_from)
-        #     mlflow.log_param("prediction_date_to", cfg.period.prediction_date_to)
+        mlflow.log_param(
+            "validation_records", cfg.period.validation.user_recency_records
+        )
 
         db_client = PostgreSQLClient()
         movies_repository = MoviesRepository(db_client=db_client)
@@ -72,14 +64,7 @@ def main(cfg: DictConfig):
             tags_repository=tags_repository,
         )
 
-        raw_dataset = data_loader_usecase.load_dataset(
-            # training_date_from=cfg.period.training_date_from,
-            # training_date_to=cfg.period.training_date_to,
-            # validation_date_from=cfg.period.validation_date_from,
-            # validation_date_to=cfg.period.validation_date_to,
-            # prediction_date_from=cfg.period.prediction_date_from,
-            # prediction_date_to=cfg.period.prediction_date_to,
-        )
+        raw_dataset = data_loader_usecase.load_dataset()
 
         rating_extractor = RatingExtractor()
         genre_extractor = GenreExtractor()
@@ -90,7 +75,8 @@ def main(cfg: DictConfig):
         )
 
         preprocessed_dataset = preprocess_usecase.preprocess_dataset(
-            dataset=raw_dataset
+            dataset=raw_dataset,
+            validation_records=cfg.period.validation.user_recency_records,
         )
 
         training_data_paths = preprocessed_dataset.training_data.save(

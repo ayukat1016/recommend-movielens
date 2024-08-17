@@ -16,9 +16,5 @@ model:
     log_evaluation: 10
 
 period:
-  training_date_from: 1
-  training_date_to: 93
-  validation_date_from: 94
-  validation_date_to: 100
-  prediction_date_from: 101
-  prediction_date_to: 107
+  validation:
+    user_recency_records: 5

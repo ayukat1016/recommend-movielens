@@ -34,7 +34,11 @@ class PredictionUsecase(object):
                 prediction,
             )
         ]
-        df = pd.DataFrame(d).sort_values(["user_id", "recency_id"]).reset_index(drop=True)
+        df = (
+            pd.DataFrame(d)
+            .sort_values(["user_id", "recency_id"])
+            .reset_index(drop=True)
+        )
         prediction_output = Prediction(prediction=df)
 
         logger.info(f"done prediction: {model.name}")

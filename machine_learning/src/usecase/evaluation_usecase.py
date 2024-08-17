@@ -46,7 +46,9 @@ class EvaluationUsecase(object):
             for u, r, m, t, p in zip(user_id, recency_id, movie_id, y_true, y_pred)
         ]
         data = (
-            pd.DataFrame(d).sort_values(["user_id", "recency_id"]).reset_index(drop=True)
+            pd.DataFrame(d)
+            .sort_values(["user_id", "recency_id"])
+            .reset_index(drop=True)
         )
         logger.info(f"done evaluation")
         logger.info(
