@@ -94,7 +94,7 @@ class DataLoaderUsecase(object):
 
         data: List[Ratings] = []
         position = 0
-        limit = 1000
+        limit = 10000
         while True:
             ratings_data = self.ratings_repository.select(
                 limit=limit,

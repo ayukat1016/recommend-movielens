@@ -99,10 +99,7 @@ def main(cfg: DictConfig):
         mlflow.log_artifact(validation_data_paths[1], "validation_xy_x")
         mlflow.log_artifact(validation_data_paths[2], "validation_xy_y")
 
-        training_dataset = TrainingDataset(
-            training_data=preprocessed_dataset.training_data,
-            validation_data=preprocessed_dataset.validation_data,
-        )
+
 
         model_class = get_model(model=cfg.model.name)
         model = model_class()
@@ -117,15 +114,22 @@ def main(cfg: DictConfig):
 
         training_usecase = TrainingUsecase()
 
+        training_dataset = TrainingDataset(
+            training_data=preprocessed_dataset.training_data,
+            validation_data=preprocessed_dataset.validation_data,
+        )
+
         training_usecase.train(
             model=model,
             training_data=training_dataset,
         )
 
         prediction_usecase = PredictionUsecase()
+
         validation_prediction_dataset = PredictionDataset(
             prediction_data=preprocessed_dataset.validation_data
         )
+
         validation_prediction = prediction_usecase.predict(
             model=model,
             data=validation_prediction_dataset,

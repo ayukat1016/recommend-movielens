@@ -10,7 +10,7 @@ TAG = recommend_movielens
 PLATFORM := linux/amd64
 
 
-############ DEMAND FORECASTING DATA_REGISTRATION COMMANDS ############
+############ RECOMMEND_MOVIELENS DATA_REGISTRATION COMMANDS ############
 DATA_REGISTRATION_DIR := $(DIR)/data_registration
 DOCKERFILE_DATA_REGISTRATION = $(DATA_REGISTRATION_DIR)/$(DOCKERFILE)
 DOCKER_DATA_REGISTRATION_TAG = $(TAG)_data_registration
@@ -41,7 +41,7 @@ pull_data_registration:
 	docker pull $(DOCKER_DATA_REGISTRATION_IMAGE_NAME)
 
 
-############ DEMAND FORECASTING MLFLOW COMMANDS ############
+############ RECOMMEND_MOVIELENS MLFLOW COMMANDS ############
 MLFLOW_DIR := $(DIR)/mlflow
 DOCKERFILE_MLFLOW = $(MLFLOW_DIR)/$(DOCKERFILE)
 DOCKER_MLFLOW_TAG = $(TAG)_mlflow
@@ -72,38 +72,7 @@ pull_mlflow:
 	docker pull $(DOCKER_MLFLOW_IMAGE_NAME)
 
 
-############ DEMAND FORECASTING BI COMMANDS ############
-BI_DIR := $(DIR)/bi
-DOCKERFILE_BI = $(BI_DIR)/$(DOCKERFILE)
-DOCKER_BI_TAG = $(TAG)_bi
-DOCKER_BI_IMAGE_NAME = $(DOCKER_REPOSITORY):$(DOCKER_BI_TAG)_$(VERSION)
-
-.PHONY: req_bi
-req_bi:
-	cd $(BI_DIR) && \
-	poetry export \
-		--without-hashes \
-		-f requirements.txt \
-		--output requirements.txt
-
-.PHONY: build_bi
-build_bi:
-	docker build \
-		--platform $(PLATFORM) \
-		-t $(DOCKER_BI_IMAGE_NAME) \
-		-f $(DOCKERFILE_BI) \
-		.
-
-.PHONY: push_bi
-push_bi:
-	docker push $(DOCKER_BI_IMAGE_NAME)
-
-.PHONY: pull_bi
-pull_bi:
-	docker pull $(DOCKER_BI_IMAGE_NAME)
-
-
-############ DEMAND FORECASTING MACHINE_LEARNING COMMANDS ############
+############ RECOMMEND_MOVIELENS MACHINE_LEARNING COMMANDS ############
 MACHINE_LEARNING_DIR := $(DIR)/machine_learning
 DOCKERFILE_MACHINE_LEARNING = $(MACHINE_LEARNING_DIR)/$(DOCKERFILE)
 DOCKER_MACHINE_LEARNING_TAG = $(TAG)_machine_learning
@@ -158,25 +127,21 @@ pull_machine_learning:
 req_all: req_data_registration \
 	req_machine_learning \
 	req_mlflow \
-	req_bi \
 
 .PHONY: build_all
 build_all: build_data_registration \
 	build_machine_learning \
 	build_mlflow \
-	build_bi \
 
 .PHONY: push_all
 push_all: push_data_registration \
 	push_machine_learning \
 	push_mlflow \
-	push_bi \
 
 .PHONY: pull_all
 pull_all: pull_data_registration \
 	pull_machine_learning \
 	pull_mlflow \
-	pull_bi \
 
 
 ############ DOCKER COMPOSE COMMANDS ############

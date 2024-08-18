@@ -42,7 +42,7 @@ class DataRegisterUsecase(object):
             header=None,
             is_first_line_header=True,
         )
-        limit = 1000
+        limit = 10000
         i = 0
         records = []
         while i < len(data):
