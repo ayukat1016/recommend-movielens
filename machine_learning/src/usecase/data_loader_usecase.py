@@ -54,13 +54,24 @@ class DataLoaderUsecase(object):
         tags_dataset_dict = [d.dict() for d in tags_data]
         tags_df = pd.DataFrame(tags_dataset_dict)
 
-        movies_tags_df = tags_df.groupby("movie_id").agg({"tag": list})
-        movies_df = movies_df.merge(movies_tags_df, on="movie_id", how="left")
-        movielens_df = ratings_df.merge(movies_df, on="movie_id", how="left")
-
+        tags_df["tag"] = tags_df["tag"].str.lower()
+        tags_agg_df = tags_df.groupby("movie_id").agg({"tag": list})
+        movies_tags_df = movies_df.merge(tags_agg_df, on="movie_id", how="left")
+        movies_tags_df["genre"] = movies_tags_df.genre.apply(lambda x: x.split("|"))
+        logger.info(f"done dataload")
+        logger.info(
+            f"""load ratings:
+{ratings_df}
+        """
+        )
+        logger.info(
+            f"""load movies_tags:
+{movies_tags_df}
+        """
+        )
         return RawDataset(
-            data_movielens=movielens_df,
-            data_movies=movies_df,
+            ratings_data=ratings_df,
+            movies_tags_data=movies_tags_df,
         )
 
     def load_movies_data(self) -> List[Movies]:

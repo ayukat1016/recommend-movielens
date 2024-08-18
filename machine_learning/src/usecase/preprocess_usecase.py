@@ -14,7 +14,7 @@ logger = configure_logger(__name__)
 class PreprocessUsecase(object):
     def __init__(
         self,
-        rating_extractor: AbstractExtractor,
+        ratings_extractor: AbstractExtractor,
         genre_extractor: AbstractExtractor,
     ):
         """Preprocess usecase.
@@ -23,7 +23,7 @@ class PreprocessUsecase(object):
             rating_extractor (AbstractExtractor): Algorithm to extract rating statitics.
             genre_extractor (AbstractExtractor): Algorithm to extract genre boolean.
         """
-        self.rating_extractor = rating_extractor
+        self.ratings_extractor = ratings_extractor
         self.genre_extractor = genre_extractor
 
     def preprocess_dataset(
@@ -40,21 +40,21 @@ class PreprocessUsecase(object):
             PreprocessedDataset: Preprocessed data with separated to training and validation.
         """
 
-        movielens_train, movielens_test = self.split_records(
-            dataset.data_movielens, validation_records
+        ratings_train, ratings_test = self.split_records(
+            dataset.ratings_data, validation_records
         )
 
-        train_keys_y = movielens_train[["user_id", "recency_id", "movie_id", "rating"]]
-        test_keys_y = movielens_test[["user_id", "recency_id", "movie_id", "rating"]]
+        train_keys_y = ratings_train[["user_id", "recency_id", "movie_id", "rating"]]
+        test_keys_y = ratings_test[["user_id", "recency_id", "movie_id", "rating"]]
 
         df_train = train_keys_y.copy()
         df_test = test_keys_y.copy()
 
-        df_train_rating = self.rating_extractor.run(movielens_train, df_train)
-        df_test_rating = self.rating_extractor.run(movielens_train, df_test)
+        df_train_rating = self.ratings_extractor.run(ratings_train, df_train)
+        df_test_rating = self.ratings_extractor.run(ratings_train, df_test)
 
-        df_train_genre = self.genre_extractor.run(dataset.data_movies, df_train)
-        df_test_genre = self.genre_extractor.run(dataset.data_movies, df_test)
+        df_train_genre = self.genre_extractor.run(dataset.movies_tags_data, df_train)
+        df_test_genre = self.genre_extractor.run(dataset.movies_tags_data, df_test)
 
         df_train = pd.concat([df_train, df_train_rating, df_train_genre], axis=1)
         df_test = pd.concat([df_test, df_test_rating, df_test_genre], axis=1)
@@ -79,24 +79,24 @@ class PreprocessUsecase(object):
 
     def split_records(
         self,
-        movielens: pd.DataFrame,
+        ratings: pd.DataFrame,
         validation_records: int,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
-        movielens["recency_id"] = movielens.groupby("user_id")["timestamp"].rank(
+        ratings["recency_id"] = ratings.groupby("user_id")["timestamp"].rank(
             ascending=False, method="first"
         )
-        movielens_train = movielens[movielens["recency_id"] > validation_records]
-        movielens_test = movielens[movielens["recency_id"] <= validation_records]
+        ratings_train = ratings[ratings["recency_id"] > validation_records]
+        ratings_test = ratings[ratings["recency_id"] <= validation_records]
 
-        movielens_train = movielens_train.sort_values(
+        ratings_train = ratings_train.sort_values(
             ["user_id", "recency_id"]
         ).reset_index(drop=True)
-        movielens_test = movielens_test.sort_values(
-            ["user_id", "recency_id"]
-        ).reset_index(drop=True)
+        ratings_test = ratings_test.sort_values(["user_id", "recency_id"]).reset_index(
+            drop=True
+        )
 
-        return (movielens_train, movielens_test)
+        return (ratings_train, ratings_test)
 
     def split_columns(
         self,

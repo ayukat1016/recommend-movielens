@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 import pandas as pd
 
-from src.domain.preprocessed_data import ExtractedGenreSchema, ExtractedRatingSchema
+from src.domain.preprocessed_data import ExtractedGenreSchema, ExtractedRatingsSchema
 from src.middleware.logger import configure_logger
 
 logger = configure_logger(__name__)
@@ -23,13 +23,13 @@ class AbstractExtractor(ABC):
         raise NotImplementedError
 
 
-class RatingExtractor(AbstractExtractor):
+class RatingsExtractor(AbstractExtractor):
     def __init__(self):
         pass
 
     def run(
         self,
-        movielens_train: pd.DataFrame,
+        ratings_train: pd.DataFrame,
         df: pd.DataFrame,
     ) -> pd.DataFrame:
         """Extract statistics from price column.
@@ -40,21 +40,21 @@ class RatingExtractor(AbstractExtractor):
         Returns:
             pd.DataFrame: DataFrame with year, month and day of week extracted.
         """
-        df_rating = df[["user_id", "recency_id", "movie_id", "rating"]].copy()
+        df_ratings = df[["user_id", "recency_id", "movie_id", "rating"]].copy()
         aggregators: list = ["min", "max", "mean"]
         user_features = (
-            movielens_train.groupby("user_id").rating.agg(aggregators).to_dict()
+            ratings_train.groupby("user_id").rating.agg(aggregators).to_dict()
         )
         movie_features = (
-            movielens_train.groupby("movie_id").rating.agg(aggregators).to_dict()
+            ratings_train.groupby("movie_id").rating.agg(aggregators).to_dict()
         )
         for agg in aggregators:
-            df_rating[f"u_{agg}"] = df_rating["user_id"].map(user_features[agg])
-            df_rating[f"m_{agg}"] = df_rating["movie_id"].map(movie_features[agg])
+            df_ratings[f"u_{agg}"] = df_ratings["user_id"].map(user_features[agg])
+            df_ratings[f"m_{agg}"] = df_ratings["movie_id"].map(movie_features[agg])
 
-        df = df_rating.iloc[:, 4:]
+        df = df_ratings.iloc[:, 4:]
 
-        ExtractedRatingSchema.validate(df)
+        ExtractedRatingsSchema.validate(df)
         logger.info(
             f"""rating data extracted:
 {df}
@@ -86,7 +86,6 @@ class GenreExtractor(AbstractExtractor):
         """
         df_genre = df[["user_id", "recency_id", "movie_id", "rating"]].copy()
         movie_genres = movies[["movie_id", "genre"]].copy()
-        movie_genres["genre"] = movie_genres["genre"].apply(ast.literal_eval)
         genres = list(set(itertools.chain(*movie_genres.genre)))
         genres = sorted(genres)
 

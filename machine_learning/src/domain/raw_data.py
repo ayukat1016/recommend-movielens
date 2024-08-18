@@ -7,14 +7,15 @@ from pandera.typing import Series
 
 @dataclass(frozen=True)
 class RawDataset:
-    data_movielens: pd.DataFrame
-    data_movies: pd.DataFrame
+    ratings_data: pd.DataFrame
+    movies_tags_data: pd.DataFrame
 
     def __post_init__(self):
-        RawDataSchema.validate(self.data_movielens)
+        RawDataRatingsSchema.validate(self.ratings_data)
+        RawDataMoviesTagsSchema.validate(self.movies_tags_data)
 
 
-class RawDataSchema(SchemaModel):
+class RawDataRatingsSchema(SchemaModel):
     user_id: Series[str] = Field(
         nullable=False,
         coerce=True,
@@ -24,13 +25,25 @@ class RawDataSchema(SchemaModel):
         coerce=True,
     )
     rating: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=False,
         coerce=True,
     )
     timestamp: Series[int] = Field(
         ge=0,
+        nullable=False,
+        coerce=True,
+    )
+
+    class Config:
+        name = "RawDataRatingsSchema"
+        strict = True
+        coerce = True
+
+
+class RawDataMoviesTagsSchema(SchemaModel):
+    movie_id: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
@@ -48,6 +61,6 @@ class RawDataSchema(SchemaModel):
     )
 
     class Config:
-        name = "RawDataSchema"
+        name = "RawDataMoviesTagsSchema"
         strict = True
         coerce = True

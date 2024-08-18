@@ -10,7 +10,7 @@ from src.infrastructure.database import PostgreSQLClient
 from src.middleware.logger import configure_logger
 from src.ml_algos.lightgbm_regressor import LightGBMRegression
 from src.ml_algos.models import get_model
-from src.ml_algos.preprocess import GenreExtractor, RatingExtractor
+from src.ml_algos.preprocess import GenreExtractor, RatingsExtractor
 from src.repository.movies_repository import MoviesRepository
 from src.repository.ratings_repository import RatingsRepository
 from src.repository.tags_repository import TagsRepository
@@ -66,11 +66,11 @@ def main(cfg: DictConfig):
 
         raw_dataset = data_loader_usecase.load_dataset()
 
-        rating_extractor = RatingExtractor()
+        ratings_extractor = RatingsExtractor()
         genre_extractor = GenreExtractor()
 
         preprocess_usecase = PreprocessUsecase(
-            rating_extractor=rating_extractor,
+            ratings_extractor=ratings_extractor,
             genre_extractor=genre_extractor,
         )
 
@@ -98,8 +98,6 @@ def main(cfg: DictConfig):
         mlflow.log_artifact(validation_data_paths[0], "validation_xy_keys")
         mlflow.log_artifact(validation_data_paths[1], "validation_xy_x")
         mlflow.log_artifact(validation_data_paths[2], "validation_xy_y")
-
-
 
         model_class = get_model(model=cfg.model.name)
         model = model_class()

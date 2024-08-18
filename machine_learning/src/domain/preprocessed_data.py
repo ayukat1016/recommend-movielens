@@ -6,46 +6,46 @@ from pandera.typing import Series
 from src.domain.common_data import XY
 
 
-class ExtractedRatingSchema(SchemaModel):
+class ExtractedRatingsSchema(SchemaModel):
     u_min: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
     m_min: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
     u_max: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
     m_max: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
     u_mean: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
     m_mean: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=True,
         coerce=True,
     )
 
     class Config:
-        name = "ExtractedRatingSchema"
+        name = "ExtractedRatingsSchema"
         strict = True
         coerce = True
 
