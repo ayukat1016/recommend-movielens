@@ -20,7 +20,7 @@ class PreprocessUsecase(object):
         """Preprocess usecase.
 
         Args:
-            rating_extractor (AbstractExtractor): Algorithm to extract rating statitics.
+            ratings_extractor (AbstractExtractor): Algorithm to extract ratings statitics.
             genre_extractor (AbstractExtractor): Algorithm to extract genre boolean.
         """
         self.ratings_extractor = ratings_extractor
