@@ -44,6 +44,19 @@ class PreprocessUsecase(object):
             dataset.ratings_data, validation_records
         )
 
+        logger.info(f"done split records")
+        logger.info(
+            f"""train ratings:
+{ratings_train}
+        """
+        )
+
+        logger.info(
+            f"""test ratings:
+{ratings_test}
+        """
+        )
+
         train_keys_y = ratings_train[["user_id", "recency_id", "movie_id", "rating"]]
         test_keys_y = ratings_test[["user_id", "recency_id", "movie_id", "rating"]]
 
