@@ -8,5 +8,5 @@ class Ratings(AbstractSchema):
     timestamp: int
 
     class Config:
-        allow_mutations = False
+        frozen = True
         extra = "forbid"

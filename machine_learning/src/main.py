@@ -24,6 +24,7 @@ logger = configure_logger(__name__)
 
 
 @hydra.main(
+    version_base="1.1",
     config_path="/opt/hydra",
     config_name="default",
 )

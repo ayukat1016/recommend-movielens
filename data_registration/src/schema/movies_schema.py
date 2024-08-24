@@ -7,5 +7,5 @@ class Movies(AbstractSchema):
     genre: str
 
     class Config:
-        allow_mutations = False
+        frozen = True
         extra = "forbid"
