@@ -23,7 +23,7 @@ class PredictionUsecase(object):
         d = [
             dict(
                 user_id=u,
-                timestamp_rank=r,  
+                timestamp_rank=r,
                 movie_id=m,
                 prediction=p,
             )

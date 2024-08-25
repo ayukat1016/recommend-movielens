@@ -154,9 +154,7 @@ def main(cfg: DictConfig):
         base_file_name = f"{run_name}"
         model_file_path = os.path.join(cwd, f"{base_file_name}_model.txt")
         model_file_path = model.save(file_path=model_file_path)
-        prediction_file_path = os.path.join(
-            cwd, f"{base_file_name}_prediction.csv"
-        )
+        prediction_file_path = os.path.join(cwd, f"{base_file_name}_prediction.csv")
         prediction_file_path = validation_prediction.save(
             file_path=prediction_file_path
         )

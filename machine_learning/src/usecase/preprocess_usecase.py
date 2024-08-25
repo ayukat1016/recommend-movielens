@@ -65,7 +65,9 @@ type:
         """
         )
 
-        train_keys_y = ratings_train[["user_id", "timestamp_rank", "movie_id", "rating"]]
+        train_keys_y = ratings_train[
+            ["user_id", "timestamp_rank", "movie_id", "rating"]
+        ]
         test_keys_y = ratings_test[["user_id", "timestamp_rank", "movie_id", "rating"]]
 
         df_train = train_keys_y.copy()
@@ -104,18 +106,20 @@ type:
         validation_records: int,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
-        ratings["timestamp_rank"] = ratings.groupby("user_id")["timestamp"].rank(
-            ascending=False, method="first"
-        ).astype(int)
+        ratings["timestamp_rank"] = (
+            ratings.groupby("user_id")["timestamp"]
+            .rank(ascending=False, method="first")
+            .astype(int)
+        )
         ratings_train = ratings[ratings["timestamp_rank"] > validation_records]
         ratings_test = ratings[ratings["timestamp_rank"] <= validation_records]
 
         ratings_train = ratings_train.sort_values(
             ["user_id", "timestamp_rank"]
         ).reset_index(drop=True)
-        ratings_test = ratings_test.sort_values(["user_id", "timestamp_rank"]).reset_index(
-            drop=True
-        )
+        ratings_test = ratings_test.sort_values(
+            ["user_id", "timestamp_rank"]
+        ).reset_index(drop=True)
 
         return (ratings_train, ratings_test)
 
