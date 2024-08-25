@@ -64,7 +64,7 @@ class FeatureImportance(BaseModel):
     importance: float
 
     class Config:
-        rozen = True
+        frozen = True
 
 
 @dataclass(frozen=True)
