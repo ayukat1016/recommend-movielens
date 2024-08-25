@@ -338,23 +338,23 @@ docker run \
         -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
-        -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
-        -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
-        -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
+        -v /home/takuya/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
+        -v /home/takuya/repository/recommend-movielens/machine_learning/src:/opt/src \
+        -v /home/takuya/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
         --net recommend_movielens \
         recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
 /usr/local/lib/python3.10/site-packages/hydra/_internal/hydra.py:119: UserWarning: Future Hydra versions will no longer change working directory at job runtime by default.
 See https://hydra.cc/docs/1.2/upgrades/1.1_to_1.2/changes_to_job_working_dir/ for more information.
   ret = run_job(
-[2024-08-22 08:23:58,007] [INFO] [__main__] [main.py:32] [main] START machine_learning...
-[2024-08-22 08:23:58,007] [INFO] [__main__] [main.py:33] [main] config: {'name': 'recommend_movielens', 'model': {'name': 'lightgbm_regression', 'params': {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.03, 'num_leaves': 31, 'min_data_in_leaf': 20, 'random_state': 42, 'importance_type': 'gain'}, 'train_params': {'early_stopping_rounds': 10, 'log_evaluation': 10}}, 'period': {'validation': {'user_recency_records': 5}}}
-[2024-08-22 08:23:58,007] [INFO] [__main__] [main.py:37] [main] current working directory: /opt/outputs/2024-08-22/08-23-57
-[2024-08-22 08:23:58,007] [INFO] [__main__] [main.py:38] [main] run_name: 2024-08-22-08-23-57
-[2024-08-22 08:23:58,007] [INFO] [__main__] [main.py:39] [main] parameters:
+[2024-08-25 06:27:54,176] [INFO] [__main__] [main.py:32] [main] START machine_learning...
+[2024-08-25 06:27:54,177] [INFO] [__main__] [main.py:33] [main] config: {'name': 'recommend_movielens', 'model': {'name': 'lightgbm_regression', 'params': {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.03, 'num_leaves': 31, 'min_data_in_leaf': 20, 'random_state': 42, 'importance_type': 'gain'}, 'train_params': {'early_stopping_rounds': 10, 'log_evaluation': 10}}, 'period': {'validation': {'user_recency_records': 5}}}
+[2024-08-25 06:27:54,177] [INFO] [__main__] [main.py:37] [main] current working directory: /opt/outputs/2024-08-25/06-27-54
+[2024-08-25 06:27:54,177] [INFO] [__main__] [main.py:38] [main] run_name: 2024-08-25-06-27-54
+[2024-08-25 06:27:54,177] [INFO] [__main__] [main.py:39] [main] parameters:
     validation_records: 5
 
-2024/08/22 08:23:58 WARNING mlflow.utils.git_utils: Failed to import Git (the Git executable is probably not on your PATH), so Git SHA is not available. Error: Failed to initialize: Bad git executable.
+2024/08/25 06:27:54 WARNING mlflow.utils.git_utils: Failed to import Git (the Git executable is probably not on your PATH), so Git SHA is not available. Error: Failed to initialize: Bad git executable.
 The git executable must be specified in one of the following ways:
     - be included in your $PATH
     - be set via $GIT_PYTHON_GIT_EXECUTABLE
@@ -371,31 +371,31 @@ $GIT_PYTHON_REFRESH environment variable. Use one of the following values:
 Example:
     export GIT_PYTHON_REFRESH=quiet
 
-[2024-08-22 08:23:58,172] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:43] [load_dataset] load data from database
-[2024-08-22 08:23:58,282] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:96] [load_movies_data] done loading 10000...
-[2024-08-22 08:23:58,297] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:96] [load_movies_data] done loading 10681...
-[2024-08-22 08:23:58,565] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 10000...
-[2024-08-22 08:23:58,715] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 20000...
-[2024-08-22 08:23:58,916] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 30000...
-[2024-08-22 08:23:59,028] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 40000...
-[2024-08-22 08:23:59,133] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 50000...
-[2024-08-22 08:23:59,298] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 60000...
-[2024-08-22 08:23:59,403] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 70000...
-[2024-08-22 08:23:59,509] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 80000...
-[2024-08-22 08:23:59,699] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 90000...
-[2024-08-22 08:23:59,817] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 100000...
-[2024-08-22 08:23:59,932] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 110000...
-[2024-08-22 08:24:00,131] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 120000...
-[2024-08-22 08:24:00,250] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 130000...
-[2024-08-22 08:24:00,301] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 132830...
-[2024-08-22 08:24:01,479] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 10000...
-[2024-08-22 08:24:01,591] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 20000...
-[2024-08-22 08:24:01,814] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 30000...
-[2024-08-22 08:24:02,024] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 40000...
-[2024-08-22 08:24:02,186] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 50000...
-[2024-08-22 08:24:02,268] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 55484...
-[2024-08-22 08:24:02,963] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:61] [load_dataset] done dataload
-[2024-08-22 08:24:02,976] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:62] [load_dataset] load ratings:
+[2024-08-25 06:27:54,266] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:43] [load_dataset] load data from database
+[2024-08-25 06:27:54,355] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:96] [load_movies_data] done loading 10000...
+[2024-08-25 06:27:54,371] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:96] [load_movies_data] done loading 10681...
+[2024-08-25 06:27:54,613] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 10000...
+[2024-08-25 06:27:54,717] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 20000...
+[2024-08-25 06:27:54,817] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 30000...
+[2024-08-25 06:27:54,989] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 40000...
+[2024-08-25 06:27:55,094] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 50000...
+[2024-08-25 06:27:55,270] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 60000...
+[2024-08-25 06:27:55,381] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 70000...
+[2024-08-25 06:27:55,486] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 80000...
+[2024-08-25 06:27:55,689] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 90000...
+[2024-08-25 06:27:55,850] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 100000...
+[2024-08-25 06:27:55,977] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 110000...
+[2024-08-25 06:27:56,165] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 120000...
+[2024-08-25 06:27:56,271] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 130000...
+[2024-08-25 06:27:56,317] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:118] [load_ratings_data] done loading 132830...
+[2024-08-25 06:27:57,189] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 10000...
+[2024-08-25 06:27:57,287] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 20000...
+[2024-08-25 06:27:57,485] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 30000...
+[2024-08-25 06:27:57,588] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 40000...
+[2024-08-25 06:27:57,685] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 50000...
+[2024-08-25 06:27:57,749] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:140] [load_tags_data] done loading 55484...
+[2024-08-25 06:27:58,340] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:61] [load_dataset] done dataload
+[2024-08-25 06:27:58,347] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:62] [load_dataset] load ratings:
         user_id  movie_id  rating   timestamp
 0             1       122     5.0   838985046
 1             1       185     5.0   838983525
@@ -411,7 +411,7 @@ Example:
 
 [132830 rows x 4 columns]
 
-[2024-08-22 08:24:02,995] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:67] [load_dataset] load movies_tags:
+[2024-08-25 06:27:58,357] [INFO] [src.usecase.data_loader_usecase] [data_loader_usecase.py:67] [load_dataset] load movies_tags:
        movie_id  ...                                                tag
 0             1  ...  [pixar, pixar, pixar, animation, animated, toy...
 1             2  ...  [for children, game, animals, joe johnston, ro...
@@ -427,7 +427,58 @@ Example:
 
 [10681 rows x 4 columns]
 
-[2024-08-22 08:24:03,519] [INFO] [src.ml_algos.preprocess] [preprocess.py:58] [run] rating data extracted:
+[2024-08-25 06:27:58,628] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:47] [preprocess_dataset] done split records
+[2024-08-25 06:27:58,634] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:48] [preprocess_dataset] train ratings:
+        user_id  movie_id  rating   timestamp  timestamp_rank
+0             1       594     5.0   838984679               6
+1             1       370     5.0   838984596               7
+2             1       355     5.0   838984474               8
+3             1       539     5.0   838984068               9
+4             1       586     5.0   838984068              10
+...         ...       ...     ...         ...             ...
+127825     1053      2194     4.0  1134007197             142
+127826     1053      2302     4.5  1134007192             143
+127827     1053      4886     5.0  1134007190             144
+127828     1053      3147     3.0  1134007182             145
+127829     1053      1094     0.5  1134007179             146
+
+[127830 rows x 5 columns]
+column:
+Index(['user_id', 'movie_id', 'rating', 'timestamp', 'timestamp_rank'], dtype='object')
+type:
+user_id             int64
+movie_id            int64
+rating            float64
+timestamp           int64
+timestamp_rank      int64
+dtype: object
+
+[2024-08-25 06:27:58,642] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:58] [preprocess_dataset] test ratings:
+      user_id  movie_id  rating   timestamp  timestamp_rank
+0           1       122     5.0   838985046               1
+1           1       616     5.0   838984941               2
+2           1       362     5.0   838984885               3
+3           1       466     5.0   838984679               4
+4           1       520     5.0   838984679               5
+...       ...       ...     ...         ...             ...
+4995     1053      1242     5.0  1134008464               1
+4996     1053      2501     5.0  1134008462               2
+4997     1053       457     4.5  1134008458               3
+4998     1053      2028     5.0  1134008444               4
+4999     1053      5418     4.5  1134008441               5
+
+[5000 rows x 5 columns]
+column:
+Index(['user_id', 'movie_id', 'rating', 'timestamp', 'timestamp_rank'], dtype='object')
+type:
+user_id             int64
+movie_id            int64
+rating            float64
+timestamp           int64
+timestamp_rank      int64
+dtype: object
+
+[2024-08-25 06:27:58,746] [INFO] [src.ml_algos.preprocess] [preprocess.py:58] [run] rating data extracted:
         u_min  m_min  u_max  m_max    u_mean    m_mean
 0         5.0    0.5    5.0    5.0  5.000000  3.604839
 1         5.0    0.5    5.0    5.0  5.000000  3.009091
@@ -453,7 +504,7 @@ u_mean    float64
 m_mean    float64
 dtype: object
 
-[2024-08-22 08:24:03,594] [INFO] [src.ml_algos.preprocess] [preprocess.py:58] [run] rating data extracted:
+[2024-08-25 06:27:58,816] [INFO] [src.ml_algos.preprocess] [preprocess.py:58] [run] rating data extracted:
       u_min  m_min  u_max  m_max    u_mean    m_mean
 0       5.0    1.0    5.0    4.5  5.000000  2.852941
 1       5.0    2.0    5.0    5.0  5.000000  3.394737
@@ -479,7 +530,7 @@ u_mean    float64
 m_mean    float64
 dtype: object
 
-[2024-08-22 08:24:03,738] [INFO] [src.ml_algos.preprocess] [preprocess.py:108] [run] genre data extracted:
+[2024-08-25 06:27:58,951] [INFO] [src.ml_algos.preprocess] [preprocess.py:108] [run] genre data extracted:
         is_no_genres_listed  is_Action  is_Adventure  is_Animation  ...  is_Sci_Fi  is_Thriller  is_War  is_Western
 0                     False      False         False          True  ...      False        False   False       False
 1                     False       True         False         False  ...      False        False   False       False
@@ -524,7 +575,7 @@ is_War                 bool
 is_Western             bool
 dtype: object
 
-[2024-08-22 08:24:03,862] [INFO] [src.ml_algos.preprocess] [preprocess.py:108] [run] genre data extracted:
+[2024-08-25 06:27:59,061] [INFO] [src.ml_algos.preprocess] [preprocess.py:108] [run] genre data extracted:
       is_no_genres_listed  is_Action  is_Adventure  is_Animation  ...  is_Sci_Fi  is_Thriller  is_War  is_Western
 0                   False      False         False         False  ...      False        False   False       False
 1                   False      False         False          True  ...      False        False   False       False
@@ -569,8 +620,8 @@ is_War                 bool
 is_Western             bool
 dtype: object
 
-[2024-08-22 08:24:03,871] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:65] [preprocess_dataset] transform training data...
-[2024-08-22 08:24:04,125] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:122] [split_columns] done preprocessing dataset:
+[2024-08-25 06:27:59,071] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:86] [preprocess_dataset] transform training data...
+[2024-08-25 06:27:59,291] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:143] [split_columns] done preprocessing dataset:
 x columns:
 Index(['u_min', 'm_min', 'u_max', 'm_max', 'u_mean', 'm_mean',
        'is_no_genres_listed', 'is_Action', 'is_Adventure', 'is_Animation',
@@ -611,8 +662,8 @@ y:
 
 [127830 rows x 1 columns]
 
-[2024-08-22 08:24:04,125] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:70] [preprocess_dataset] transform validation data...
-[2024-08-22 08:24:04,169] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:122] [split_columns] done preprocessing dataset:
+[2024-08-25 06:27:59,291] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:91] [preprocess_dataset] transform validation data...
+[2024-08-25 06:27:59,337] [INFO] [src.usecase.preprocess_usecase] [preprocess_usecase.py:143] [split_columns] done preprocessing dataset:
 x columns:
 Index(['u_min', 'm_min', 'u_max', 'm_max', 'u_mean', 'm_mean',
        'is_no_genres_listed', 'is_Action', 'is_Adventure', 'is_Animation',
@@ -652,26 +703,26 @@ y:
 
 [5000 rows x 1 columns]
 
-[2024-08-22 08:24:05,478] [INFO] [__main__] [main.py:89] [main] save files
-    training data: ['/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_training_xy_keys.csv', '/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_training_xy_x.csv', '/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_training_xy_y.csv']
-    validation data: ['/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_validation_xy_keys.csv', '/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_validation_xy_x.csv', '/opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_validation_xy_y.csv']
+[2024-08-25 06:28:00,804] [INFO] [__main__] [main.py:89] [main] save files
+    training data: ['/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_training_xy_keys.csv', '/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_training_xy_x.csv', '/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_training_xy_y.csv']
+    validation data: ['/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_validation_xy_keys.csv', '/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_validation_xy_x.csv', '/opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_validation_xy_y.csv']
 
-[2024-08-22 08:24:05,503][src.ml_algos.lightgbm_regressor][INFO] - params: {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.05, 'num_leaves': 32, 'subsample': 0.7, 'subsample_freq': 1, 'feature_fraction': 0.8, 'min_data_in_leaf': 50, 'random_state': 123, 'importance_type': 'gain'}
-[2024-08-22 08:24:05,506][src.ml_algos.lightgbm_regressor][INFO] - initialized model: LGBMRegressor(feature_fraction=0.8, importance_type='gain', learning_rate=0.05,
+[2024-08-25 06:28:00,822][src.ml_algos.lightgbm_regressor][INFO] - params: {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.05, 'num_leaves': 32, 'subsample': 0.7, 'subsample_freq': 1, 'feature_fraction': 0.8, 'min_data_in_leaf': 50, 'random_state': 123, 'importance_type': 'gain'}
+[2024-08-25 06:28:00,824][src.ml_algos.lightgbm_regressor][INFO] - initialized model: LGBMRegressor(feature_fraction=0.8, importance_type='gain', learning_rate=0.05,
               metric='rmse', min_data_in_leaf=50, n_estimators=1000,
               num_leaves=32, objective='rmse', random_state=123, subsample=0.7,
               subsample_freq=1)
-[2024-08-22 08:24:05,506][src.ml_algos.lightgbm_regressor][INFO] - params: {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.03, 'num_leaves': 31, 'min_data_in_leaf': 20, 'random_state': 42, 'importance_type': 'gain'}
-[2024-08-22 08:24:05,508][src.ml_algos.lightgbm_regressor][INFO] - initialized model: LGBMRegressor(importance_type='gain', learning_rate=0.03, metric='rmse',
+[2024-08-25 06:28:00,824][src.ml_algos.lightgbm_regressor][INFO] - params: {'boosting_type': 'gbdt', 'n_estimators': 1000, 'objective': 'rmse', 'metric': 'rmse', 'learning_rate': 0.03, 'num_leaves': 31, 'min_data_in_leaf': 20, 'random_state': 42, 'importance_type': 'gain'}
+[2024-08-25 06:28:00,826][src.ml_algos.lightgbm_regressor][INFO] - initialized model: LGBMRegressor(importance_type='gain', learning_rate=0.03, metric='rmse',
               min_data_in_leaf=20, n_estimators=1000, objective='rmse',
               random_state=42)
-[2024-08-22 08:24:05,526] [INFO] [src.usecase.training_usecase] [training_usecase.py:17] [train] start training: lightgbm_regression...
-[2024-08-22 08:24:05,530][src.ml_algos.lightgbm_regressor][INFO] - start train for model: LGBMRegressor(importance_type='gain', learning_rate=0.03, metric='rmse',
+[2024-08-25 06:28:00,848] [INFO] [src.usecase.training_usecase] [training_usecase.py:17] [train] start training: lightgbm_regression...
+[2024-08-25 06:28:00,851][src.ml_algos.lightgbm_regressor][INFO] - start train for model: LGBMRegressor(importance_type='gain', learning_rate=0.03, metric='rmse',
               min_data_in_leaf=20, n_estimators=1000, objective='rmse',
               random_state=42)
 [LightGBM] [Warning] min_data_in_leaf is set=20, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=20
 [LightGBM] [Warning] min_data_in_leaf is set=20, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=20
-[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.016996 seconds.
+[LightGBM] [Info] Auto-choosing row-wise multi-threading, the overhead of testing was 0.015935 seconds.
 You can set `force_row_wise=true` to remove the overhead.
 And if memory is not enough, you can set `force_col_wise=true`.
 [LightGBM] [Info] Total Bins 583
@@ -687,48 +738,48 @@ Training until validation scores don't improve for 10 rounds
 [60]    train's rmse: 0.839025  valid's rmse: 0.944347
 Early stopping, best iteration is:
 [59]    train's rmse: 0.839564  valid's rmse: 0.944331
-[2024-08-22 08:24:06,282] [INFO] [src.usecase.training_usecase] [training_usecase.py:25] [train] done training: lightgbm_regression
-[2024-08-22 08:24:06,282] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:19] [predict] start prediction: lightgbm_regression...
+[2024-08-25 06:28:01,538] [INFO] [src.usecase.training_usecase] [training_usecase.py:25] [train] done training: lightgbm_regression
+[2024-08-25 06:28:01,538] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:19] [predict] start prediction: lightgbm_regression...
 [LightGBM] [Warning] min_data_in_leaf is set=20, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=20
-[2024-08-22 08:24:06,337] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:44] [predict] done prediction: lightgbm_regression
-[2024-08-22 08:24:06,343] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:45] [predict] prediction:
-      user_id  recency_id  movie_id  prediction
-0           1         1.0       122    3.996753
-1           1         2.0       616    4.185415
-2           1         3.0       362    4.411735
-3           1         4.0       466    3.996753
-4           1         5.0       520    4.215140
-...       ...         ...       ...         ...
-4995     1053         1.0      1242    4.245757
-4996     1053         2.0      2501    4.217269
-4997     1053         3.0       457    4.192939
-4998     1053         4.0      2028    4.258149
-4999     1053         5.0      5418    4.052528
+[2024-08-25 06:28:01,584] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:44] [predict] done prediction: lightgbm_regression
+[2024-08-25 06:28:01,590] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:45] [predict] prediction:
+      user_id  timestamp_rank  movie_id  prediction
+0           1               1       122    3.996753
+1           1               2       616    4.185415
+2           1               3       362    4.411735
+3           1               4       466    3.996753
+4           1               5       520    4.215140
+...       ...             ...       ...         ...
+4995     1053               1      1242    4.245757
+4996     1053               2      2501    4.217269
+4997     1053               3       457    4.192939
+4998     1053               4      2028    4.258149
+4999     1053               5      5418    4.052528
 
 [5000 rows x 4 columns]
 
-[2024-08-22 08:24:06,344] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:26] [evaluate] start evaluation...
-[2024-08-22 08:24:06,355] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:53] [evaluate] done evaluation
-[2024-08-22 08:24:06,361] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:54] [evaluate] evaluation:
+[2024-08-25 06:28:01,591] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:26] [evaluate] start evaluation...
+[2024-08-25 06:28:01,603] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:53] [evaluate] done evaluation
+[2024-08-25 06:28:01,610] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:54] [evaluate] evaluation:
 data:
-      user_id  recency_id  movie_id  y_true    y_pred
-0           1         1.0       122     5.0  3.996753
-1           1         2.0       616     5.0  4.185415
-2           1         3.0       362     5.0  4.411735
-3           1         4.0       466     5.0  3.996753
-4           1         5.0       520     5.0  4.215140
-...       ...         ...       ...     ...       ...
-4995     1053         1.0      1242     5.0  4.245757
-4996     1053         2.0      2501     5.0  4.217269
-4997     1053         3.0       457     4.5  4.192939
-4998     1053         4.0      2028     5.0  4.258149
-4999     1053         5.0      5418     4.5  4.052528
+      user_id  timestamp_rank  movie_id  y_true    y_pred
+0           1               1       122     5.0  3.996753
+1           1               2       616     5.0  4.185415
+2           1               3       362     5.0  4.411735
+3           1               4       466     5.0  3.996753
+4           1               5       520     5.0  4.215140
+...       ...             ...       ...     ...       ...
+4995     1053               1      1242     5.0  4.245757
+4996     1053               2      2501     5.0  4.217269
+4997     1053               3       457     4.5  4.192939
+4998     1053               4      2028     5.0  4.258149
+4999     1053               5      5418     4.5  4.052528
 
 [5000 rows x 5 columns]
 mean_absolute_error: 0.7409291996383492
 root_mean_squared_error: 0.9443305071336199
 
-[2024-08-22 08:24:06,394] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:79] [export_feature_importance] feature importances
+[2024-08-25 06:28:01,650] [INFO] [src.usecase.evaluation_usecase] [evaluation_usecase.py:79] [export_feature_importance] feature importances
            feature_name     importance
 0                m_mean  562747.602737
 1                u_mean  294953.369169
@@ -757,9 +808,28 @@ root_mean_squared_error: 0.9443305071336199
 24               is_War       0.000000
 25           is_Western       0.000000
 
-[2024-08-22 08:24:06,394][src.ml_algos.lightgbm_regressor][INFO] - save model: /opt/outputs/2024-08-22/08-23-57/2024-08-22-08-23-57_model.txt
-[2024-08-22 08:24:06,432] [INFO] [__main__] [main.py:170] [main] DONE machine learning task for lightgbm_regression: 2024-08-22-08-23-57
-[2024-08-22 08:24:06,439] [INFO] [__main__] [main.py:172] [main] DONE machine_learning
+[2024-08-25 06:28:01,651] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:57] [recommend] start recommendation: lightgbm_regression...
+[LightGBM] [Warning] min_data_in_leaf is set=20, min_child_samples=20 will be ignored. Current value: min_data_in_leaf=20
+[2024-08-25 06:28:01,689] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:80] [recommend] done recommendation: lightgbm_regression
+[2024-08-25 06:28:01,696] [INFO] [src.usecase.prediction_usecase] [prediction_usecase.py:81] [recommend] recommendation:
+      user_id  movie_id  prediction
+0           1       362    4.411735
+1           1       520    4.215140
+2           1       616    4.185415
+3           1       122    3.996753
+4           1       466    3.996753
+...       ...       ...         ...
+4995     1053      2028    4.258149
+4996     1053      1242    4.245757
+4997     1053      2501    4.217269
+4998     1053       457    4.192939
+4999     1053      5418    4.052528
+
+[5000 rows x 3 columns]
+
+[2024-08-25 06:28:01,697][src.ml_algos.lightgbm_regressor][INFO] - save model: /opt/outputs/2024-08-25/06-27-54/2024-08-25-06-27-54_model.txt
+[2024-08-25 06:28:01,757] [INFO] [__main__] [main.py:189] [main] DONE machine learning task for lightgbm_regression: 2024-08-25-06-27-54
+[2024-08-25 06:28:01,765] [INFO] [__main__] [main.py:191] [main] DONE machine_learning
 ```
 </details>
 
@@ -851,13 +921,13 @@ docker run \
         -e POSTGRES_PORT=5432 \
         -e POSTGRES_USER=postgres \
         -e POSTGRES_PASSWORD=password \
-        -e POSTGRES_DBNAME=demand_forecasting_m5 \
+        -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
-        -v /home/xxx/repository/demand-forecasting-m5/machine_learning/hydra:/opt/hydra \
-        -v /home/xxx/repository/demand-forecasting-m5/machine_learning/src:/opt/src \
-        -v /home/xxx/repository/demand-forecasting-m5/machine_learning/outputs:/opt/outputs \
-        --net demand_forecasting_m5 \
-        demand_forecasting_m5:demand_forecasting_m5_machine_learning_1.0.0 \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
+        --net recommend_movielens \
+        recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
 ```

@@ -48,17 +48,25 @@ class PreprocessUsecase(object):
         logger.info(
             f"""train ratings:
 {ratings_train}
+column:
+{ratings_train.columns}
+type:
+{ratings_train.dtypes}
         """
         )
 
         logger.info(
             f"""test ratings:
 {ratings_test}
+column:
+{ratings_test.columns}
+type:
+{ratings_test.dtypes}
         """
         )
 
-        train_keys_y = ratings_train[["user_id", "recency_id", "movie_id", "rating"]]
-        test_keys_y = ratings_test[["user_id", "recency_id", "movie_id", "rating"]]
+        train_keys_y = ratings_train[["user_id", "timestamp_rank", "movie_id", "rating"]]
+        test_keys_y = ratings_test[["user_id", "timestamp_rank", "movie_id", "rating"]]
 
         df_train = train_keys_y.copy()
         df_test = test_keys_y.copy()
@@ -96,16 +104,16 @@ class PreprocessUsecase(object):
         validation_records: int,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
 
-        ratings["recency_id"] = ratings.groupby("user_id")["timestamp"].rank(
+        ratings["timestamp_rank"] = ratings.groupby("user_id")["timestamp"].rank(
             ascending=False, method="first"
-        )
-        ratings_train = ratings[ratings["recency_id"] > validation_records]
-        ratings_test = ratings[ratings["recency_id"] <= validation_records]
+        ).astype(int)
+        ratings_train = ratings[ratings["timestamp_rank"] > validation_records]
+        ratings_test = ratings[ratings["timestamp_rank"] <= validation_records]
 
         ratings_train = ratings_train.sort_values(
-            ["user_id", "recency_id"]
+            ["user_id", "timestamp_rank"]
         ).reset_index(drop=True)
-        ratings_test = ratings_test.sort_values(["user_id", "recency_id"]).reset_index(
+        ratings_test = ratings_test.sort_values(["user_id", "timestamp_rank"]).reset_index(
             drop=True
         )
 
@@ -124,9 +132,9 @@ class PreprocessUsecase(object):
             XY: dataset to be used for model training, evaluation and prediction.
         """
         df = raw_data
-        df = df.sort_values(["user_id", "recency_id"]).reset_index(drop=True)
+        df = df.sort_values(["user_id", "timestamp_rank"]).reset_index(drop=True)
 
-        keys = df[["user_id", "recency_id", "movie_id"]]
+        keys = df[["user_id", "timestamp_rank", "movie_id"]]
         data = self.split_data_target(
             keys=keys,
             data=df,
@@ -160,7 +168,7 @@ y:
         """
         y = data[["rating"]]
         x = data.drop(
-            ["user_id", "recency_id", "movie_id", "rating"],
+            ["user_id", "timestamp_rank", "movie_id", "rating"],
             axis=1,
         )
         return XY(

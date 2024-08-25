@@ -137,18 +137,29 @@ def main(cfg: DictConfig):
         evaluation_usecase = EvaluationUsecase()
 
         evaluation = evaluation_usecase.evaluate(
-            user_id=validation_prediction.prediction.user_id.tolist(),
-            recency_id=validation_prediction.prediction.recency_id.tolist(),
-            movie_id=validation_prediction.prediction.movie_id.tolist(),
+            user_id=validation_prediction.data.user_id.tolist(),
+            timestamp_rank=validation_prediction.data.timestamp_rank.tolist(),
+            movie_id=validation_prediction.data.movie_id.tolist(),
+            y_pred=validation_prediction.data.prediction.tolist(),
             y_true=preprocessed_dataset.validation_data.y.rating.tolist(),
-            y_pred=validation_prediction.prediction.prediction.tolist(),
         )
 
         feature_importance = evaluation_usecase.export_feature_importance(model=model)
 
+        validation_recommendation = prediction_usecase.recommend(
+            model=model,
+            data=validation_prediction_dataset,
+        )
+
         base_file_name = f"{run_name}"
         model_file_path = os.path.join(cwd, f"{base_file_name}_model.txt")
         model_file_path = model.save(file_path=model_file_path)
+        prediction_file_path = os.path.join(
+            cwd, f"{base_file_name}_prediction.csv"
+        )
+        prediction_file_path = validation_prediction.save(
+            file_path=prediction_file_path
+        )
         evaluation_file_path = os.path.join(cwd, f"{base_file_name}_evaluation.csv")
         evaluation_file_path = evaluation.save_data(file_path=evaluation_file_path)
         feature_importance_file_path = os.path.join(
@@ -157,10 +168,18 @@ def main(cfg: DictConfig):
         feature_importance_file_path = feature_importance.save(
             file_path=feature_importance_file_path
         )
+        recommendation_file_path = os.path.join(
+            cwd, f"{base_file_name}_recommendation.csv"
+        )
+        recommendation_file_path = validation_recommendation.save(
+            file_path=recommendation_file_path
+        )
 
         mlflow.log_artifact(model_file_path, "model")
+        mlflow.log_artifact(prediction_file_path, "prediction")
         mlflow.log_artifact(evaluation_file_path, "evaluation")
         mlflow.log_artifact(feature_importance_file_path, "feature_importance")
+        mlflow.log_artifact(recommendation_file_path, "recommendation")
         mlflow.log_metric(f"mean_absolute_error", evaluation.mean_absolute_error)
         mlflow.log_metric(
             f"root_mean_squared_error",

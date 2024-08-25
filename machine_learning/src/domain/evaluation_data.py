@@ -32,7 +32,7 @@ class EvaluationDataSchema(SchemaModel):
         nullable=False,
         coerce=True,
     )
-    recency_id: Series[str] = Field(
+    timestamp_rank: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
@@ -41,13 +41,13 @@ class EvaluationDataSchema(SchemaModel):
         coerce=True,
     )
     y_true: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=False,
         coerce=True,
     )
     y_pred: Series[float] = Field(
-        ge=0.0,
+        ge=0.5,
         le=5.0,
         nullable=False,
         coerce=True,

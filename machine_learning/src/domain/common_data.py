@@ -62,7 +62,7 @@ class KeyDataSchema(SchemaModel):
         nullable=False,
         coerce=True,
     )
-    recency_id: Series[str] = Field(
+    timestamp_rank: Series[str] = Field(
         nullable=False,
         coerce=True,
     )
