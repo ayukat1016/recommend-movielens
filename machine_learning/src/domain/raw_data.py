@@ -16,11 +16,11 @@ class RawDataset:
 
 
 class RawDataRatingsSchema(SchemaModel):
-    user_id: Series[str] = Field(
+    user_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
-    movie_id: Series[str] = Field(
+    movie_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
@@ -43,7 +43,7 @@ class RawDataRatingsSchema(SchemaModel):
 
 
 class RawDataMoviesTagsSchema(SchemaModel):
-    movie_id: Series[str] = Field(
+    movie_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )

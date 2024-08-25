@@ -32,15 +32,15 @@ class Prediction:
 
 
 class PredictionDataSchema(SchemaModel):
-    user_id: Series[str] = Field(
+    user_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
-    timestamp_rank: Series[str] = Field(
+    timestamp_rank: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
-    movie_id: Series[str] = Field(
+    movie_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
@@ -76,11 +76,11 @@ class Recommendation:
 
 
 class RecommendationDataSchema(SchemaModel):
-    user_id: Series[str] = Field(
+    user_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
-    movie_id: Series[str] = Field(
+    movie_id: Series[int] = Field(
         nullable=False,
         coerce=True,
     )
