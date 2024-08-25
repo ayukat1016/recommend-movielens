@@ -847,7 +847,7 @@ root_mean_squared_error: 0.9443305071336199
 
 ### 4. MLflowの確認
 
-- 前処理、学習、評価の結果はMLflowに登録されます
+- 前処理、学習、評価、評価の結果はMLflowに登録されます
 - URL: http://localhost:15000
 
 #### MLflow
