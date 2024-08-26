@@ -32,14 +32,6 @@ build_data_registration:
 		-f $(DOCKERFILE_DATA_REGISTRATION) \
 		.
 
-.PHONY: push_data_registration
-push_data_registration:
-	docker push $(DOCKER_DATA_REGISTRATION_IMAGE_NAME)
-
-.PHONY: pull_data_registration
-pull_data_registration:
-	docker pull $(DOCKER_DATA_REGISTRATION_IMAGE_NAME)
-
 
 ############ RECOMMEND_MOVIELENS MLFLOW COMMANDS ############
 MLFLOW_DIR := $(DIR)/mlflow
@@ -62,14 +54,6 @@ build_mlflow:
 		-t $(DOCKER_MLFLOW_IMAGE_NAME) \
 		-f $(DOCKERFILE_MLFLOW) \
 		.
-
-.PHONY: push_mlflow
-push_mlflow:
-	docker push $(DOCKER_MLFLOW_IMAGE_NAME)
-
-.PHONY: pull_mlflow
-pull_mlflow:
-	docker pull $(DOCKER_MLFLOW_IMAGE_NAME)
 
 
 ############ RECOMMEND_MOVIELENS MACHINE_LEARNING COMMANDS ############
@@ -113,14 +97,6 @@ run_machine_learning:
 		$(DOCKER_MACHINE_LEARNING_IMAGE_NAME) \
 		python -m src.main
 
-.PHONY: push_machine_learning
-push_machine_learning:
-	docker push $(DOCKER_MACHINE_LEARNING_IMAGE_NAME)
-
-.PHONY: pull_machine_learning
-pull_machine_learning:
-	docker pull $(DOCKER_MACHINE_LEARNING_IMAGE_NAME)
-
 
 ############ ALL COMMANDS ############
 .PHONY: req_all
@@ -132,16 +108,6 @@ req_all: req_data_registration \
 build_all: build_data_registration \
 	build_machine_learning \
 	build_mlflow \
-
-.PHONY: push_all
-push_all: push_data_registration \
-	push_machine_learning \
-	push_mlflow \
-
-.PHONY: pull_all
-pull_all: pull_data_registration \
-	pull_machine_learning \
-	pull_mlflow \
 
 
 ############ DOCKER COMPOSE COMMANDS ############

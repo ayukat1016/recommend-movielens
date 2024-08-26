@@ -1,6 +1,6 @@
 # recommend-movielens
 
-本リポジトリは機械学習パイプライン（データ取得、前処理、学習、評価、予測）を実行する機械学習システムのテンプレートです。テンプレートはレコメンデーションのデータセットを用いて、ユーザIDごとに評価値（レビュー）を予測、1000件のユーザに評価が高い順で映画5件をレコメンデーションします。
+本リポジトリは機械学習パイプライン（データ取得、前処理、学習、評価、予測）を実行する機械学習システムのテンプレートです。テンプレートはレコメンデーションのデータセットを用いて、ユーザIDごとに検証データの評価値（レビュー）を予測、1000件のユーザに評価が高い順で映画5件をレコメンドします。
 
 ```sh
 # ユーザIDごとに映画IDを予測（prediction評価値をユーザIDごとに降順でソートしてリスト作成）
@@ -21,9 +21,9 @@
 
 ## データ
 
-データは[MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)の映画評価データを使用します。
+データは[MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)の映画レビューデータセットを使用します。
 
-- テンプレートは過去実績の映画の評価値（レビュー）を学習、ユーザごとに直近に評価した5件の評価値を予測します。
+- テンプレートは過去実績の映画の評価値（レビュー）を学習、ユーザごとに直近評価した5件（検証データ）の評価値を予測します。
 
 - データセットはユーザID/映画IDごとの評価値（ratings）、映画IDごとの映画情報（movies）、ユーザID/映画IDごとのタグ情報（tags）の3つです。
   - `ratings`: ユーザID`user_id`、映画ID`movie_id`ごとの評価値`rating`と入力日時`timestamp`を格納したトランザクションデータ
@@ -31,7 +31,6 @@
   - `movies`: 映画ID`movie_id`ごとのタイトル`title`と映画ジャンル`genre`を持つマスタデータ 
   
   - `tags`: ユーザID`user_id`、映画ID`movie_id`ごとにユーザが入力したタグ情報`tag`と入力日時`timestamp`を格納したマスタデータ
-
 
 - ratingsのレコード件数は100万件を超えますが、テンプレートは処理高速化のため、ユーザIDで件数を絞った約13万件のデモデータを使用します。
 
@@ -47,7 +46,7 @@
     - 元ファイルは`tags.dat`
     - ヘッダ列を付与
 
- - 学習はcsvファイルを直接利用するのではなく、データベース(DB)に登録します。スキーマは[tables.sql](./data/tables.sql)で定義しています。
+ - 学習はcsvファイルを直接利用するのではなく、データベース(DB)に登録してから取得します。スキーマは[tables.sql](./data/tables.sql)で定義しています。
 
 
 ## Components
@@ -55,9 +54,10 @@
 テンプレートは以下のコンポーネントで構成されています。
 
 - PostgreSQL database: データを管理するデータベース。テンプレートで使用するデータおよびMLflow tracking serverのデータを記録する。
+- [notebook](./notebook/): 機械学習パイプラインを動作確認したnotebookを格納。[MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)を加工して、デモ用csvファイルを[data](./data/)に作成する。
+- [data_registration](./data_registration/):[data](./data/)に格納したデモ用csvファイルをPostgreSQLに登録するバッチ処理。
+- [machine_learning](./machine_learning/): 機械学習開発のためのテンプレートとして例示したプログラム。PostgreSQLからデータを取得し、前処理、学習、評価、予測をバッチ実行し、記録をMLflow tracking serverに記録する。
 - [mlflow](./mlflow/): 機械学習の学習、評価、予測を記録し、webブラウザで結果を表示します。
-- [data_registration](./data_registration/): [MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)のデータをPostgreSQLに登録するバッチ処理。
-- [machine_learning](./machine_learning/): 機械学習開発のためのテンプレートとして例示したプログラム。PostgreSQLからデータを取得し、前処理、学習、評価、予測を実行し、記録をMLflow tracking serverに記録する。
 
 
 ## machine_learningの構成
@@ -95,7 +95,8 @@
 
 - Docker
 - Docker compose
-- Poetry（ライブラリ更新時に必要、処理実行するだけであれば不要）
+- Pyenv（notebook実行時に使用する、notebook以外はライブラリ更新時に必要）
+- Poetry（notebook実行時に使用する、notebook以外はライブラリ更新時に必要）
 - makeコマンドの実行環境
 
 ```sh
@@ -109,9 +110,15 @@ GNU Make 4.3
 ## Getting started
 
 ### 1. Docker imageのビルド
-- 本リポジトリのルートディレクトリに移動します。
 
+- 本リポジトリを取得してルートディレクトリに移動します。
 ```sh
+# リポジトリの取得
+$ git clone https://github.com/ayukat1016/recommend-movielens.git
+
+# ディレクトリの移動
+$ cd recommend-movielens/
+
 # 現在のディレクトリの表示(「/xxx/repository」はユーザにより異なります。)
 $ pwd
 /home/xxx/repository/recommend-movielens
@@ -945,3 +952,52 @@ docker run \
         recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
 ```
+
+## Poetryを使用したNotebook実行環境
+
+PCの仮想環境でサンプルコードを実行できるよう`pyproject.toml`を用意しました。以下の手順を参考に環境構築して、[Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/#)のNotebookを実行してください。
+
+- ディレクトリ`notebook`に移動します。
+```sh
+# ディレクトリの移動
+$ cd notebook/
+
+# ディレクトリの確認(`/xxx/repository`はユーザにより異なります。)
+$ pwd
+/home/xxx/repository/recommend-movielens/notebook
+```
+
+- PyenvでPythonのバージョンを指定します。
+```sh
+# Pythonのインストール
+$ pyenv install 3.10.6
+
+# バージョンの指定
+$ pyenv local 3.10.6
+
+# バージョンの確認
+$ pyenv versions
+  system
+* 3.10.6
+```
+
+- Poetryの仮想環境を構築し、仮想環境に`pyproject.toml`で指定したライブラリをインストールします。
+```sh
+# 仮想環境の構築
+$ poetry install
+
+# 仮想環境の確認
+$ poetry env list
+notebook-cK98Fuj--py3.10 (Activated)
+```
+
+- poetryの仮想環境で、Jupyter Labのコマンドを実行します。
+
+```sh
+# 仮想環境起動＋Jupyter Lab実行
+$ poetry run jupyter lab --allow-root --NotebookApp.token='' --port=8888
+```
+
+- webブラウザのURL http://localhost:8888 にアクセスし、サンプルコードを実行します。
+
+- 利用終了時はコマンドラインで Ctrlキー + C を押下して、Jupyter Labを停止してください。
