@@ -98,16 +98,52 @@ run_machine_learning:
 		python -m src.main
 
 
+############ RECOMMEND_MOVIELENS NOTEBOOK COMMANDS ############
+NOTEBOOK_DIR := $(DIR)/notebook
+DOCKERFILE_NOTEBOOK = $(NOTEBOOK_DIR)/$(DOCKERFILE)
+DOCKER_NOTEBOOK_TAG = $(TAG)_notebook
+DOCKER_NOTEBOOK_IMAGE_NAME = $(DOCKER_REPOSITORY):$(DOCKER_NOTEBOOK_TAG)_$(VERSION)
+
+.PHONY: req_notebook
+req_notebook:
+	cd $(NOTEBOOK_DIR) && \
+	poetry export \
+		--without-hashes \
+		-f requirements.txt \
+		--output requirements.txt
+
+.PHONY: build_notebook
+build_notebook:
+	docker build \
+		--platform $(PLATFORM) \
+		-t $(DOCKER_NOTEBOOK_IMAGE_NAME) \
+		-f $(DOCKERFILE_NOTEBOOK) \
+		.
+
+.PHONY: run_notebook
+run_notebook:
+	docker run \
+		-it \
+		--rm \
+		--name notebook \
+		-v $(DIR):/opt \
+		-p 8888:8888 \
+		$(DOCKER_NOTEBOOK_IMAGE_NAME) \
+		jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token=''
+
+
 ############ ALL COMMANDS ############
 .PHONY: req_all
 req_all: req_data_registration \
 	req_machine_learning \
 	req_mlflow \
+	req_notebook \
 
 .PHONY: build_all
 build_all: build_data_registration \
 	build_machine_learning \
 	build_mlflow \
+	build_notebook \
 
 
 ############ DOCKER COMPOSE COMMANDS ############

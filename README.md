@@ -53,9 +53,9 @@
 
 テンプレートは以下のコンポーネントで構成されています。
 
-- PostgreSQL database: データを管理するデータベース。テンプレートで使用するデータおよびMLflow tracking serverのデータを記録する。
+- PostgreSQL: データを管理するデータベース。テンプレートで使用するデータおよびMLflow tracking serverのデータを記録する。
 - [notebook](./notebook/): 機械学習パイプラインを動作確認したnotebookを格納。[MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)を加工して、デモ用csvファイルを[data](./data/)に作成する。
-- [data_registration](./data_registration/):[data](./data/)に格納したデモ用csvファイルをPostgreSQLに登録するバッチ処理。
+- [data_registration](./data_registration/): ディレクトリ[data](./data/)に格納したデモ用csvファイルをPostgreSQLに登録するバッチ処理。
 - [machine_learning](./machine_learning/): 機械学習開発のためのテンプレートとして例示したプログラム。PostgreSQLからデータを取得し、前処理、学習、評価、予測をバッチ実行し、記録をMLflow tracking serverに記録する。
 - [mlflow](./mlflow/): 機械学習の学習、評価、予測を記録し、webブラウザで結果を表示します。
 
@@ -75,7 +75,7 @@
   - [MLflow](https://mlflow.org/): 機械学習の学習パラメータ及び実行結果を管理するライブラリ
   - [Hydra](https://hydra.cc/): 機械学習のパラメータを管理するライブラリ
 - リポジトリのライブラリ管理
-  - [poetry](https://python-poetry.org/): Pythonのライブラリを管理する。
+  - [poetry](https://python-poetry.org/): Pythonライブラリを依存関係を解決する。
 
 [machine_learning](./machine_learning/)のプログラムはレイヤードアーキテクチャを採用。クラスを抽象クラスと具象クラスに分けて実装、コンポーネントの依存が一方向になるよう整理しています。
 プログラムは以下のコンポーネントで構成されています。
@@ -95,9 +95,8 @@
 
 - Docker
 - Docker compose
-- Pyenv（notebook実行時に使用する、notebook以外はライブラリ更新時に必要）
-- Poetry（notebook実行時に使用する、notebook以外はライブラリ更新時に必要）
 - makeコマンドの実行環境
+- Poetry（ライブラリ更新時に必要、機械学習パイプラインの実行時は不要）
 
 ```sh
 # makeのインストール(実行時にsudoパスワードを入力)
@@ -124,7 +123,7 @@ $ pwd
 /home/xxx/repository/recommend-movielens
 ```
 
-- Dockerファイルは3つあり、[makefile](./makefile)の`make build_all`は全てのDockerをまとめてビルドします。
+- Dockerファイルは3つあり、[makefile](./makefile)の`make build_all`は全てのDockerファイルをまとめてビルドします。
 
 ```sh
 # 全てのDockerfileを一括でビルド
@@ -140,6 +139,7 @@ docker build \
         --platform linux/amd64 \
         -t recommend_movielens:recommend_movielens_data_registration_1.0.0 \
         -f /home/xxx/repository/recommend-movielens/data_registration/Dockerfile \
+        .
 
 # machine_learningのビルド
 $ make build_machine_learning
@@ -147,6 +147,7 @@ docker build \
         --platform linux/amd64 \
         -t recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         -f /home/xxx/repository/recommend-movielens/machine_learning/Dockerfile \
+        .
 
 # mlflowのビルド
 $ make build_mlflow
@@ -154,7 +155,15 @@ docker build \
         --platform linux/amd64 \
         -t recommend_movielens:recommend_movielens_mlflow_1.0.0 \
         -f /home/xxx/repository/recommend-movielens/mlflow/Dockerfile \
+        .
 
+# notebookのビルド
+$ make build_notebook
+docker build \
+        --platform linux/amd64 \
+        -t recommend_movielens:recommend_movielens_notebook_1.0.0 \
+        -f /home/xxx/repository/recommend-movielens/notebook/Dockerfile \
+        .
 ```
 
 - ビルドしたDocker imageを確認します。
@@ -163,6 +172,7 @@ docker build \
 # Docker imageの確認
 $ docker images
 REPOSITORY                        TAG                                                      IMAGE ID       CREATED         SIZE
+recommend_movielens               recommend_movielens_notebook_1.0.0                       00bcd4fba96a   2 hours ago     854MB
 recommend_movielens               recommend_movielens_machine_learning_1.0.0               c8a631462bf2   3 minutes ago   1.05GB
 recommend_movielens               recommend_movielens_data_registration_1.0.0              1b4400d21838   4 minutes ago   378MB
 recommend_movielens               recommend_movielens_mlflow_1.0.0                         a224d2fdf0e4   6 days ago      837MB
@@ -324,6 +334,7 @@ $
   - -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src
 
 ```sh
+# 機械学習パイプラインの実行
 $ make run_machine_learning
 docker run \
         -it \
@@ -914,6 +925,32 @@ $ docker ps -a
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
+### 6. コンテナによるNotebook実行
+- Notebookは処理概要を把握したいとき、またはdataのcsvファイルを再作成するときに使用します。
+
+- Notebookの予測値とMLFlowに記録した予測値は一致します。
+
+- NotebookはDockerコンテナを起動して実行します。[makefile](./makefile)の`make run_notebook`はコンテナ内で[Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/#)のコマンドを実行します。
+
+- コンテナ起動時に`-v`オプションでルートディレクトリ`recommend-movielens`配下のファイルをコンテナ内にマウントします。
+```sh
+# Notebookの実行
+$ make run_notebook
+docker run \
+        -it \
+        --rm \
+        --name notebook \
+        -v /home/xxx/repository/recommend-movielens:/opt \
+        -p 8888:8888 \
+        recommend_movielens:recommend_movielens_notebook_1.0.0 \
+        jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token=''
+```
+- webブラウザのURL http://localhost:8888 にアクセスし、ディレクトリ`notebook`の中のサンプルコードを実行します。
+
+- 利用終了時はコマンドラインで Ctrlキー + C を押下して、Jupyter Labを停止してください。このとき、コンテナは自動的に停止、削除されます。
+
+
+
 ## 使用するデータ範囲の変更
 
 使用するデータや学習、予測の期間は以下で管理することができます。
@@ -934,6 +971,7 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 使用するHydraのconfigファイルはmachine_learningを起動する`docker run`のコマンドに環境変数`TARGET_CONFIG`に指定します。
 
 ```sh
+# 機械学習パイプラインの実行
 $ make run_machine_learning
 docker run \
         -it \
@@ -952,52 +990,3 @@ docker run \
         recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
 ```
-
-## Poetryを使用したNotebook実行環境
-
-PCの仮想環境でサンプルコードを実行できるよう`pyproject.toml`を用意しました。以下の手順を参考に環境構築して、[Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/#)のNotebookを実行してください。
-
-- ディレクトリ`notebook`に移動します。
-```sh
-# ディレクトリの移動
-$ cd notebook/
-
-# ディレクトリの確認(`/xxx/repository`はユーザにより異なります。)
-$ pwd
-/home/xxx/repository/recommend-movielens/notebook
-```
-
-- PyenvでPythonのバージョンを指定します。
-```sh
-# Pythonのインストール
-$ pyenv install 3.10.6
-
-# バージョンの指定
-$ pyenv local 3.10.6
-
-# バージョンの確認
-$ pyenv versions
-  system
-* 3.10.6
-```
-
-- Poetryの仮想環境を構築し、仮想環境に`pyproject.toml`で指定したライブラリをインストールします。
-```sh
-# 仮想環境の構築
-$ poetry install
-
-# 仮想環境の確認
-$ poetry env list
-notebook-cK98Fuj--py3.10 (Activated)
-```
-
-- poetryの仮想環境で、Jupyter Labのコマンドを実行します。
-
-```sh
-# 仮想環境起動＋Jupyter Lab実行
-$ poetry run jupyter lab --allow-root --NotebookApp.token='' --port=8888
-```
-
-- webブラウザのURL http://localhost:8888 にアクセスし、サンプルコードを実行します。
-
-- 利用終了時はコマンドラインで Ctrlキー + C を押下して、Jupyter Labを停止してください。
