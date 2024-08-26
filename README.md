@@ -53,7 +53,7 @@
 
 テンプレートは以下のコンポーネントで構成されています。
 
-- PostgreSQL: データを管理するデータベース。テンプレートで使用するデータおよびMLflow tracking serverのデータを記録する。
+- PostgreSQL database: データを管理するデータベース。テンプレートで使用するデータおよびMLflow tracking serverのデータを記録する。
 - [notebook](./notebook/): 機械学習パイプラインを動作確認したnotebookを格納。[MovieLens 10M Dataset](https://files.grouplens.org/datasets/movielens/ml-10m.zip)を加工して、デモ用csvファイルを[data](./data/)に作成する。
 - [data_registration](./data_registration/): ディレクトリ[data](./data/)に格納したデモ用csvファイルをPostgreSQLに登録するバッチ処理。
 - [machine_learning](./machine_learning/): 機械学習開発のためのテンプレートとして例示したプログラム。PostgreSQLからデータを取得し、前処理、学習、評価、予測をバッチ実行し、記録をMLflow tracking serverに記録する。
@@ -179,7 +179,7 @@ recommend_movielens               recommend_movielens_mlflow_1.0.0              
 ```
 ### 2. 事前準備
 
-- Docker composeでPosgreSQL database、MLflow、data registration、BIのコンテナを起動します。
+- Docker composeでPosgreSQL database、MLflow、data registrationのコンテナを起動します。
 - [makefile](./makefile)の`make up`は[docker-compose.yaml](docker-compose.yaml)の処理をまとめて実行します。
 
 ```sh
@@ -368,9 +368,9 @@ docker run \
         -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
-        -v /home/takuya/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
-        -v /home/takuya/repository/recommend-movielens/machine_learning/src:/opt/src \
-        -v /home/takuya/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
+        -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
         --net recommend_movielens \
         recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
