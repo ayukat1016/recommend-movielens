@@ -64,3 +64,48 @@ class RawDataMoviesTagsSchema(SchemaModel):
         name = "RawDataMoviesTagsSchema"
         strict = True
         coerce = True
+
+
+class RawDataMoviesSchema(SchemaModel):
+    movie_id: Series[int] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    title: Series[str] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    genre: Series[str] = Field(
+        nullable=False,
+        coerce=True,
+    )
+
+    class Config:
+        name = "RawDataMoviesSchema"
+        strict = True
+        coerce = True
+
+
+class RawDataTagsSchema(SchemaModel):
+    user_id: Series[int] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    movie_id: Series[int] = Field(
+        nullable=False,
+        coerce=True,
+    )
+    tag: Series[str] = Field(
+        nullable=True,
+        coerce=True,
+    )
+    timestamp: Series[int] = Field(
+        ge=0,
+        nullable=False,
+        coerce=True,
+    )
+
+    class Config:
+        name = "RawDataRatingsSchema"
+        strict = True
+        coerce = True
