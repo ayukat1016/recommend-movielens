@@ -24,6 +24,7 @@ class AbstractDBClient(ABC):
     def execute_create_query(
         self,
         query: str,
+        parameters: Optional[Tuple] = None,
     ):
         raise NotImplementedError
 

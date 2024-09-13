@@ -42,17 +42,9 @@ class DataLoaderUsecase(object):
 
         logger.info(f"load data from database")
 
-        movies_data = self.load_movies_data()
-        movies_dataset_dict = [d.dict() for d in movies_data]
-        movies_df = pd.DataFrame(movies_dataset_dict)
-
-        ratings_data = self.load_ratings_data()
-        ratings_dataset_dict = [d.dict() for d in ratings_data]
-        ratings_df = pd.DataFrame(ratings_dataset_dict)
-
-        tags_data = self.load_tags_data()
-        tags_dataset_dict = [d.dict() for d in tags_data]
-        tags_df = pd.DataFrame(tags_dataset_dict)
+        movies_df = self.make_movies_data()
+        ratings_df = self.make_ratings_data()
+        tags_df = self.make_tags_data()
 
         tags_df["tag"] = tags_df["tag"].str.lower()
         tags_agg_df = tags_df.groupby("movie_id").agg({"tag": list})
@@ -73,6 +65,42 @@ class DataLoaderUsecase(object):
             ratings_data=ratings_df,
             movies_tags_data=movies_tags_df,
         )
+
+    def make_movies_data(self) -> pd.DataFrame:
+        """make movies DataFrame.
+
+        Returns:
+            pd.DataFrame: movies data.
+        """
+
+        movies_data = self.load_movies_data()
+        movies_dataset_dict = [d.dict() for d in movies_data]
+        movies_df = pd.DataFrame(movies_dataset_dict)
+        return movies_df
+
+    def make_ratings_data(self) -> pd.DataFrame:
+        """make ratings DataFrame.
+
+        Returns:
+            pd.DataFrame: ratings data.
+        """
+
+        ratings_data = self.load_ratings_data()
+        ratings_dataset_dict = [d.dict() for d in ratings_data]
+        ratings_df = pd.DataFrame(ratings_dataset_dict)
+        return ratings_df
+
+    def make_tags_data(self) -> pd.DataFrame:
+        """make tags DataFrame.
+
+        Returns:
+            pd.DataFrame: tags data.
+        """
+
+        tags_data = self.load_tags_data()
+        tags_dataset_dict = [d.dict() for d in tags_data]
+        tags_df = pd.DataFrame(tags_dataset_dict)
+        return tags_df
 
     def load_movies_data(self) -> List[Movies]:
         """Load data from movies table.
