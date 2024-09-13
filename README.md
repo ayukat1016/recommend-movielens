@@ -96,7 +96,7 @@
 - Docker
 - Docker compose
 - makeコマンドの実行環境
-- Poetry（ライブラリ更新時に必要、機械学習パイプラインの実行時は不要）
+- Poetry（ライブラリ更新/静的解析/テストコード実行時に必要、機械学習パイプラインの実行時は不要）
 
 ```sh
 # makeのインストール(実行時にsudoパスワードを入力)
@@ -106,7 +106,7 @@ $ make --version
 GNU Make 4.3
 ```
 
-## Getting started
+## コンテナによる機械学習パイプラインの実行
 
 ### 1. Docker imageのビルド
 
@@ -925,41 +925,12 @@ $ docker ps -a
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
-### 6. コンテナによるNotebook実行
-- Notebookは処理概要を把握したいとき、またはdataのcsvファイルを再作成するときに使用します。
 
-- Notebookの予測値とMLFlowに記録した予測値は一致します。
-
-- NotebookはDockerコンテナを起動して実行します。[makefile](./makefile)の`make run_notebook`はコンテナ内で[Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/#)のコマンドを実行します。
-
-- コンテナ起動時に`-v`オプションでルートディレクトリ`recommend-movielens`配下のファイルをコンテナ内にマウントします。
-```sh
-# Notebookの実行
-$ make run_notebook
-docker run \
-        -it \
-        --rm \
-        --name notebook \
-        -v /home/xxx/repository/recommend-movielens:/opt \
-        -p 8888:8888 \
-        recommend_movielens:recommend_movielens_notebook_1.0.0 \
-        jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token=''
-```
-- webブラウザのURL http://localhost:8888 にアクセスし、ディレクトリ`notebook`の中のサンプルコードを実行します。
-
-- 利用終了時はコマンドラインで Ctrlキー + C を押下して、Jupyter Labを停止してください。このとき、コンテナは自動的に停止、削除されます。
-
-
-
-## 使用するデータ範囲の変更
+### 6.（参考）使用するデータ範囲の変更
 
 使用するデータや学習、予測の期間は以下で管理することができます。
 
-### data_registrationで登録するデータ
-
 [data_registration](data_registration/)で登録するデータは[docker-compose.yaml](docker-compose.yaml)の`command`で指定しています。
-
-### machine_learningで使用するデータ
 
 [machine_learning](machine_learning/)で使用するデータは[hydraディレクトリ](machine_learning/hydra/)配下にある[default.yaml](machine_learning/hydra/default.yaml)で定義しています。
 本データは時系列データであるため、学習、評価で使用するデータは期間で指定しています。期間の指定は[default.yaml](machine_learning/hydra/default.yaml)の`period`で定義します。
@@ -989,4 +960,56 @@ docker run \
         --net recommend_movielens \
         recommend_movielens:recommend_movielens_machine_learning_1.0.0 \
         python -m src.main
+```
+
+## コンテナによるNotebook実行
+- [notebook](./notebook)は処理概要を把握したいとき、[data](./data)のcsvファイルを再作成するときに使用します。
+
+- [notebook](./notebook)の予測値とMLFlowに記録した予測値は一致します。
+
+- [notebook](./notebook)はDockerコンテナを起動して実行します。[makefile](./makefile)の`make run_notebook`はコンテナ内で[Jupyter Lab](https://jupyterlab.readthedocs.io/en/latest/#)のコマンドを実行します。
+
+- コンテナ起動時に`-v`オプションでルートディレクトリ`recommend-movielens`配下のファイルをコンテナ内にマウントします。
+```sh
+# Notebookの実行
+$ make run_notebook
+docker run \
+        -it \
+        --rm \
+        --name notebook \
+        -v /home/xxx/repository/recommend-movielens:/opt \
+        -p 8888:8888 \
+        recommend_movielens:recommend_movielens_notebook_1.0.0 \
+        jupyter lab --ip=0.0.0.0 --allow-root --NotebookApp.token=''
+```
+- webブラウザのURL http://localhost:8888 にアクセスし、[notebook](./notebook)の中のサンプルコードを実行します。
+
+- 利用終了時はコマンドラインで Ctrlキー + C を押下して、Jupyter Labを停止してください。このとき、コンテナは自動的に停止、削除されます。
+
+
+## Poetry仮想環境により静的解析／テストコード実行
+- PCの仮想環境でサンプルコードを実行できるよう`pyproject.toml`を用意しました。ディレクトリ`data_registration`または`machine_learning`に移動して、ディレクトリ`src`を指定し、静的解析を実行してください。
+
+```sh
+# ディレクトリの移動
+$ cd machine_learning
+
+# 現在のディレクトリの表示(「/xxx/repository」はユーザにより異なります。)
+$ pwd
+/home/xxx/repository/recommend-movielens/machine_learning
+
+# 静的解析の実行(black 以外に flake8, mypy, isort を実行可能)
+$ poetry run black src/
+All done! ✨ 🍰 ✨
+35 files left unchanged.
+```
+
+- ディレクトリ`machine_learning`に移動して、ディレクトリ`tests`のテストコードを指定し、`pytest`を実行してください。
+```sh
+# 現在のディレクトリの表示(「/xxx/repository」はユーザにより異なります。)
+$ pwd
+/home/xxx/repository/recommend-movielens/machine_learning
+
+# テストコードの実行
+$ poetry run pytest -vv -s tests/
 ```
