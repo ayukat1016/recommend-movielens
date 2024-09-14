@@ -74,7 +74,7 @@ class DataLoaderUsecase(object):
         """
 
         movies_data = self.load_movies_data()
-        movies_dataset_dict = [d.dict() for d in movies_data]
+        movies_dataset_dict = [d.model_dump() for d in movies_data]
         movies_df = pd.DataFrame(movies_dataset_dict)
         return movies_df
 
@@ -86,7 +86,7 @@ class DataLoaderUsecase(object):
         """
 
         ratings_data = self.load_ratings_data()
-        ratings_dataset_dict = [d.dict() for d in ratings_data]
+        ratings_dataset_dict = [d.model_dump() for d in ratings_data]
         ratings_df = pd.DataFrame(ratings_dataset_dict)
         return ratings_df
 
@@ -98,7 +98,7 @@ class DataLoaderUsecase(object):
         """
 
         tags_data = self.load_tags_data()
-        tags_dataset_dict = [d.dict() for d in tags_data]
+        tags_dataset_dict = [d.model_dump() for d in tags_data]
         tags_df = pd.DataFrame(tags_dataset_dict)
         return tags_df
 

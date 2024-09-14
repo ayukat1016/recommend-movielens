@@ -70,7 +70,7 @@ root_mean_squared_error: {rmse}
         model: AbstractModel,
     ) -> FeatureImportances:
         feature_importances = model.get_feature_importance()
-        d = [f.dict() for f in feature_importances]
+        d = [f.model_dump() for f in feature_importances]
         data = (
             pd.DataFrame(d)
             .sort_values("importance", ascending=False)

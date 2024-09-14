@@ -102,16 +102,16 @@ def test_load_data(
     mocker.patch.object(data_loader_usecase, "load_tags_data", return_value=tags_data)
 
     got_movies = data_loader_usecase.make_movies_data()
-    want_movies = pd.DataFrame([d.dict() for d in movies_data])
+    want_movies = pd.DataFrame([d.model_dump() for d in movies_data])
     assert_frame_equal(got_movies, want_movies)
     RawDataMoviesSchema.validate(got_movies)
 
     got_ratings = data_loader_usecase.make_ratings_data()
-    want_ratings = pd.DataFrame([d.dict() for d in ratings_data])
+    want_ratings = pd.DataFrame([d.model_dump() for d in ratings_data])
     assert_frame_equal(got_ratings, want_ratings)
     RawDataRatingsSchema.validate(got_ratings)
 
     got_tags = data_loader_usecase.make_tags_data()
-    want_tags = pd.DataFrame([d.dict() for d in tags_data])
+    want_tags = pd.DataFrame([d.model_dump() for d in tags_data])
     assert_frame_equal(got_tags, want_tags)
     RawDataTagsSchema.validate(got_tags)

@@ -33,7 +33,7 @@ class RatingsRepository(AbstractRatingsRepository):
         self,
         records: List[Ratings],
     ):
-        data = records[0].dict()
+        data = records[0].model_dump()
         _columns = list(data.keys())
         columns = ",".join(_columns)
         query = f"""
@@ -50,7 +50,7 @@ class RatingsRepository(AbstractRatingsRepository):
 
         parameters = []
         for d in records:
-            values = tuple(d.dict().values())
+            values = tuple(d.model_dump().values())
             parameters.append(values)
         self.db_client.execute_bulk_insert_or_update_query(
             query=query,
