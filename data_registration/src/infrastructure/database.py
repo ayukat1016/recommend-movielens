@@ -80,7 +80,7 @@ class PostgreSQLClient(AbstractDBClient):
         query: str,
         parameters: Optional[List[Tuple]] = None,
     ) -> bool:
-        # logger.debug(f"bulk insert or update query: {query}, parameters: {parameters}")
+        logger.debug(f"bulk insert or update query: {query}, parameters: {parameters}")
         with self.get_connection() as conn:
             try:
                 with conn.cursor(cursor_factory=DictCursor) as cursor:
@@ -99,10 +99,11 @@ class PostgreSQLClient(AbstractDBClient):
         query: str,
         parameters: Optional[Tuple] = None,
     ) -> List[Dict[str, Any]]:
-        # logger.info(f"select query: {query}, parameters: {parameters}")
+        logger.debug(f"select query: {query}, parameters: {parameters}")
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, parameters)
-                rows = cursor.fetchall()
-        # logger.info(f"rows: {rows}")
+                columns = [desc[0] for desc in cursor.description]
+                rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        logger.debug(f"rows: {rows}")
         return rows

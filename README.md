@@ -346,6 +346,7 @@ docker run \
         -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
+        -e LOG_LEVEL=INFO \
         -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
         -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
         -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
@@ -368,6 +369,7 @@ docker run \
         -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
+        -e LOG_LEVEL=INFO \
         -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
         -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
         -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \
@@ -954,6 +956,7 @@ docker run \
         -e POSTGRES_DBNAME=recommend_movielens \
         -e MLFLOW_TRACKING_URI=http://mlflow:5000 \
         -e TARGET_CONFIG=default \
+        -e LOG_LEVEL=INFO \
         -v /home/xxx/repository/recommend-movielens/machine_learning/hydra:/opt/hydra \
         -v /home/xxx/repository/recommend-movielens/machine_learning/src:/opt/src \
         -v /home/xxx/repository/recommend-movielens/machine_learning/outputs:/opt/outputs \

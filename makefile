@@ -90,6 +90,7 @@ run_machine_learning:
 		-e POSTGRES_DBNAME=recommend_movielens \
 		-e MLFLOW_TRACKING_URI=http://mlflow:5000 \
 		-e TARGET_CONFIG=default \
+		-e LOG_LEVEL=INFO \
 		-v $(MACHINE_LEARNING_DIR)/hydra:/opt/hydra \
 		-v $(MACHINE_LEARNING_DIR)/src:/opt/src \
 		-v $(MACHINE_LEARNING_DIR)/outputs:/opt/outputs \
