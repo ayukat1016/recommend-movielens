@@ -104,4 +104,5 @@ class PostgreSQLClient(AbstractDBClient):
             with conn.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, parameters)
                 rows = cursor.fetchall()
+        # logger.info(f"rows: {rows}")
         return rows

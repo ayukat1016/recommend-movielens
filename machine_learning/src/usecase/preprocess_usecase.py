@@ -138,14 +138,19 @@ type:
         df = raw_data
         df = df.sort_values(["user_id", "timestamp_rank"]).reset_index(drop=True)
 
-        keys = df[["user_id", "timestamp_rank", "movie_id"]]
+        keys_df = df[["user_id", "timestamp_rank", "movie_id"]]
+        data_df = df.drop(["user_id", "timestamp_rank", "movie_id"], axis=1)
         data = self.split_data_target(
-            keys=keys,
-            data=df,
+            keys=keys_df,
+            data=data_df,
         )
 
         logger.info(
             f"""done preprocessing dataset:
+keys columns:
+{data.keys.columns}
+keys:
+{data.keys}
 x columns:
 {data.x.columns}
 x:
@@ -171,10 +176,7 @@ y:
             XY: training data x and target data y.
         """
         y = data[["rating"]]
-        x = data.drop(
-            ["user_id", "timestamp_rank", "movie_id", "rating"],
-            axis=1,
-        )
+        x = data.drop(["rating"], axis=1)
         return XY(
             keys=keys,
             x=x,
