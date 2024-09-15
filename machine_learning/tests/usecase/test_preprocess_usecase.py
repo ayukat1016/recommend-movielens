@@ -1,8 +1,9 @@
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-from src.ml_algos.preprocess import RatingsExtractor, GenreExtractor
+
 from src.domain.common_data import XY
+from src.ml_algos.preprocess import GenreExtractor, RatingsExtractor
 from src.usecase.preprocess_usecase import PreprocessUsecase
 
 
@@ -116,9 +117,9 @@ from src.usecase.preprocess_usecase import PreprocessUsecase
             XY(
                 keys=pd.DataFrame(
                     [
-                    dict(user_id=1, timestamp_rank=1, movie_id=1),
-                    dict(user_id=2, timestamp_rank=2, movie_id=2),
-                    dict(user_id=3, timestamp_rank=3, movie_id=3),
+                        dict(user_id=1, timestamp_rank=1, movie_id=1),
+                        dict(user_id=2, timestamp_rank=2, movie_id=2),
+                        dict(user_id=3, timestamp_rank=3, movie_id=3),
                     ]
                 ),
                 x=pd.DataFrame(
@@ -209,13 +210,7 @@ from src.usecase.preprocess_usecase import PreprocessUsecase
                         },
                     ]
                 ),
-                y=pd.DataFrame(
-                    [
-                        dict(rating=1.0),
-                        dict(rating=2.0),
-                        dict(rating=3.0)
-                    ]
-                ),
+                y=pd.DataFrame([dict(rating=1.0), dict(rating=2.0), dict(rating=3.0)]),
             ),
         )
     ],
@@ -240,4 +235,3 @@ def test_split_data_target(
     assert_frame_equal(got.keys, want.keys)
     assert_frame_equal(got.x, want.x)
     assert_frame_equal(got.y, want.y)
-
