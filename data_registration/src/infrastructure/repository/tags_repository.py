@@ -1,37 +1,23 @@
-from abc import ABC, abstractmethod
+
 from typing import List
 
-from src.infrastructure.database import AbstractDBClient
-from src.schema.movies_schema import Movies
-from src.schema.tables_schema import TABLES
+from src.domain.repository.tags_repository import AbstractTagsRepository
+from src.infrastructure.database.db_client import AbstractDBClient
+from src.infrastructure.schema.tables_schema import TABLES
+from src.infrastructure.schema.tags_schema import Tags
 
 
-class AbstractMoviesRepository(ABC):
-    def __init__(
-        self,
-        db_client: AbstractDBClient,
-    ):
-        self.db_client = db_client
-
-    @abstractmethod
-    def bulk_insert(
-        self,
-        records: List[Movies],
-    ):
-        raise NotImplementedError
-
-
-class MoviesRepository(AbstractMoviesRepository):
+class TagsRepository(AbstractTagsRepository):
     def __init__(
         self,
         db_client: AbstractDBClient,
     ):
         super().__init__(db_client=db_client)
-        self.table_name = TABLES.MOVIES.value
+        self.table_name = TABLES.TAGS.value
 
     def bulk_insert(
         self,
-        records: List[Movies],
+        records: List[Tags],
     ):
         data = records[0].model_dump()
         _columns = list(data.keys())
@@ -43,7 +29,7 @@ class MoviesRepository(AbstractMoviesRepository):
         VALUES
             %s
         ON CONFLICT
-            (movie_id)
+            (user_id, movie_id)
         DO NOTHING
         ;
         """

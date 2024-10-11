@@ -2,14 +2,14 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from src.domain.raw_data import (
+from src.domain.model.raw_data import (
     RawDataMoviesSchema,
     RawDataRatingsSchema,
     RawDataTagsSchema,
 )
-from src.schema.movies_schema import Movies
-from src.schema.ratings_schema import Ratings
-from src.schema.tags_schema import Tags
+from src.infrastructure.schema.movies_schema import Movies
+from src.infrastructure.schema.ratings_schema import Ratings
+from src.infrastructure.schema.tags_schema import Tags
 from src.usecase.data_loader_usecase import DataLoaderUsecase
 
 

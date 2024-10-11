@@ -1,10 +1,10 @@
-from src.schema.abstract_schema import AbstractSchema
+from src.infrastructure.schema.abstract_schema import AbstractSchema
 
 
-class Ratings(AbstractSchema):
+class Tags(AbstractSchema):
     user_id: int
     movie_id: int
-    rating: float
+    tag: str
     timestamp: int
 
     class Config:

@@ -2,8 +2,8 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from src.domain.common_data import XY
-from src.ml_algos.preprocess import GenreExtractor, RatingsExtractor
+from src.domain.algorithm.preprocess import GenreExtractor, RatingsExtractor
+from src.domain.model.common_data import XY
 from src.usecase.preprocess_usecase import PreprocessUsecase
 
 
