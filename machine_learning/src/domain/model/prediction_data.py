@@ -5,7 +5,7 @@ import pandas as pd
 from pandera import Field, SchemaModel
 from pandera.typing import Series
 
-from src.domain.common_data import XY
+from src.domain.model.common_data import XY
 
 
 @dataclass(frozen=True)

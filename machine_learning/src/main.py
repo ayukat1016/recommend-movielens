@@ -4,16 +4,16 @@ import mlflow  # type: ignore
 from omegaconf import DictConfig
 
 import hydra
-from src.domain.prediction_data import PredictionDataset
-from src.domain.training_data import TrainingDataset
-from src.infrastructure.database import PostgreSQLClient
+from src.domain.algorithm.lightgbm_regressor import LightGBMRegression
+from src.domain.algorithm.models import get_model
+from src.domain.algorithm.preprocess import GenreExtractor, RatingsExtractor
+from src.domain.model.prediction_data import PredictionDataset
+from src.domain.model.training_data import TrainingDataset
+from src.infrastructure.database.db_client import PostgreSQLClient
+from src.infrastructure.repository.movies_repository import MoviesRepository
+from src.infrastructure.repository.ratings_repository import RatingsRepository
+from src.infrastructure.repository.tags_repository import TagsRepository
 from src.middleware.logger import configure_logger
-from src.ml_algos.lightgbm_regressor import LightGBMRegression
-from src.ml_algos.models import get_model
-from src.ml_algos.preprocess import GenreExtractor, RatingsExtractor
-from src.repository.movies_repository import MoviesRepository
-from src.repository.ratings_repository import RatingsRepository
-from src.repository.tags_repository import TagsRepository
 from src.usecase.data_loader_usecase import DataLoaderUsecase
 from src.usecase.evaluation_usecase import EvaluationUsecase
 from src.usecase.prediction_usecase import PredictionUsecase

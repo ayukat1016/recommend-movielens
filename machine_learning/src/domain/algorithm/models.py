@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List
 
-from src.ml_algos.lightgbm_regressor import LightGBMRegression
+from src.domain.algorithm.lightgbm_regressor import LightGBMRegression
 
 
 class MODEL(Enum):

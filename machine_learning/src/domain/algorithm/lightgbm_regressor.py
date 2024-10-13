@@ -8,7 +8,7 @@ import pandas as pd
 import yaml
 from lightgbm import Booster, LGBMRegressor
 
-from src.domain.evaluation_data import FeatureImportance
+from src.domain.model.evaluation_data import FeatureImportance
 
 LGB_REGRESSION_DEFAULT_PARAMS: Dict[str, Any] = {
     "boosting_type": "gbdt",

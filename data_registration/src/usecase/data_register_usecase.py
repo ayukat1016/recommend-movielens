@@ -1,12 +1,12 @@
 from src.middleware.file_reader import read_csv_to_list, read_text_file
 from src.middleware.logger import configure_logger
-from src.repository.movies_repository import AbstractMoviesRepository
-from src.repository.ratings_repository import AbstractRatingsRepository
-from src.repository.tables_repository import AbstractTablesRepository
-from src.repository.tags_repository import AbstractTagsRepository
-from src.schema.movies_schema import Movies
-from src.schema.ratings_schema import Ratings
-from src.schema.tags_schema import Tags
+from src.domain.repository.movies_repository import AbstractMoviesRepository
+from src.domain.repository.ratings_repository import AbstractRatingsRepository
+from src.domain.repository.tables_repository import AbstractTablesRepository
+from src.domain.repository.tags_repository import AbstractTagsRepository
+from src.infrastructure.schema.movies_schema import Movies
+from src.infrastructure.schema.ratings_schema import Ratings
+from src.infrastructure.schema.tags_schema import Tags
 
 logger = configure_logger(__name__)
 

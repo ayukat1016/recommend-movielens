@@ -1,24 +1,10 @@
-from abc import ABC, abstractmethod
 from typing import List
 
-from src.infrastructure.database import AbstractDBClient
-from src.schema.ratings_schema import Ratings
-from src.schema.tables_schema import TABLES
+from src.domain.repository.ratings_repository import AbstractRatingsRepository
+from src.infrastructure.database.db_client import AbstractDBClient
+from src.infrastructure.schema.ratings_schema import Ratings
+from src.infrastructure.schema.tables_schema import TABLES
 
-
-class AbstractRatingsRepository(ABC):
-    def __init__(
-        self,
-        db_client: AbstractDBClient,
-    ):
-        self.db_client = db_client
-
-    @abstractmethod
-    def bulk_insert(
-        self,
-        records: List[Ratings],
-    ):
-        raise NotImplementedError
 
 
 class RatingsRepository(AbstractRatingsRepository):

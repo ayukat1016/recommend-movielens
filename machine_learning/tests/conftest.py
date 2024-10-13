@@ -2,13 +2,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pytest
 
-from src.infrastructure.database import AbstractDBClient
-from src.repository.movies_repository import AbstractMoviesRepository
-from src.repository.ratings_repository import AbstractRatingsRepository
-from src.repository.tags_repository import AbstractTagsRepository
-from src.schema.movies_schema import Movies
-from src.schema.ratings_schema import Ratings
-from src.schema.tags_schema import Tags
+from src.domain.repository.movies_repository import AbstractMoviesRepository
+from src.domain.repository.ratings_repository import AbstractRatingsRepository
+from src.domain.repository.tags_repository import AbstractTagsRepository
+from src.infrastructure.database.db_client import AbstractDBClient
+from src.infrastructure.schema.movies_schema import Movies
+from src.infrastructure.schema.ratings_schema import Ratings
+from src.infrastructure.schema.tags_schema import Tags
 
 
 class MockPostgreSQLClient(AbstractDBClient):
